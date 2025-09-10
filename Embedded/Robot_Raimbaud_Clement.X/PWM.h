@@ -5,7 +5,7 @@
 #define MOTEUR_GAUCHE 1
 
 void InitPWM(void);
-void PWMSetSpeed(int, float);
+void PWMSetSpeedConsigne(int, float);
 void PWMUpdateSpeed(void);
 
 #endif /* PWM_H */

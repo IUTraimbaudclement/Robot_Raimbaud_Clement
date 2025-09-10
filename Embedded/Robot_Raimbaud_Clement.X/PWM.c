@@ -1,8 +1,11 @@
 #include <xc.h>
 #include "IO.h"
 #include "PWM.h"
+#include "Robot.h"
+#include "Toolbox.h"
 
 #define PWMPER 24.0
+#define acceleration 0.01
 
 void InitPWM(void) {
     PTCON2bits.PCLKDIV = 0b000; //Divide by 1
@@ -22,32 +25,17 @@ void InitPWM(void) {
 
 double talon = 50;
 
-void PWMSetSpeed(int moteur, float vitesseEnPourcents) {
+void PWMSetSpeedConsigne(int moteur, float vitesseEnPourcents) {
     if (vitesseEnPourcents > 100.0)
         vitesseEnPourcents = 100.0;
     else if (vitesseEnPourcents < -100.0)
         vitesseEnPourcents = -100.0;
 
-    if (moteur == MOTEUR_GAUCHE) {
-        if (vitesseEnPourcents > 0) {
-            PDC1 = vitesseEnPourcents * PWMPER + talon;
-            SDC1 = talon;
-        } else {
-            SDC1 = (-vitesseEnPourcents) * PWMPER + talon;
-            PDC1 = talon;
-        }
+    if (moteur == MOTEUR_GAUCHE)
+        robotState.vitesseGaucheConsigne = vitesseEnPourcents;
 
-    } else if (moteur == MOTEUR_DROIT) {
-        if (vitesseEnPourcents > 0) {
-            SDC2 = vitesseEnPourcents * PWMPER + talon;
-            PDC2 = talon;
-        } else {
-            PDC2 = (-vitesseEnPourcents) * PWMPER + talon;
-            SDC2 = talon;
-        }
-
-    }
-
+    else if (moteur == MOTEUR_DROIT)
+        robotState.vitesseDroiteConsigne = vitesseEnPourcents;
 
 }
 
@@ -65,8 +53,6 @@ void PWMUpdateSpeed()
     if (robotState.vitesseGaucheCommandeCourante > 0)
     {
         PDC1 = robotState.vitesseGaucheCommandeCourante * PWMPER + talon;
-        Université de Toulon 18
-        Projet : conception d?un robot mobile Valentin Gies
         SDC1 = talon;
     }
     else

@@ -52,17 +52,19 @@ void __attribute__((interrupt, no_auto_psv)) _T3Interrupt(void)
     IFS0bits.T3IF = 0; // Clear Timer3 Interrupt Flag
     LED_ORANGE_1 = !LED_ORANGE_1;
       
+    
     if(toggle == 0)
     {
-        PWMSetSpeed(MOTEUR_DROIT, 20);
-        PWMSetSpeed(MOTEUR_GAUCHE, 20);
+        PWMSetSpeedConsigne(MOTEUR_DROIT, 20);
+        PWMSetSpeedConsigne(MOTEUR_GAUCHE, 20);
         toggle = 1;
     }
     else
     {
-        PWMSetSpeed(MOTEUR_DROIT, -20);
-        PWMSetSpeed(MOTEUR_GAUCHE, -20);
+        PWMSetSpeedConsigne(MOTEUR_DROIT, -20);
+        PWMSetSpeedConsigne(MOTEUR_GAUCHE, -20);
         toggle = 0;
     }
+   
 
 }

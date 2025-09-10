@@ -5,6 +5,7 @@
 #include "IO.h"
 #include "timer.h"
 #include "pwm.h"
+#include "robot.h"
 
 int main (void){
     /***********************************************************************************************/
@@ -41,6 +42,15 @@ int main (void){
     /***********************************************************************************************/
     // Boucle Principale
     /***********************************************************************************************/
+    
+    robotState.vitesseGaucheCommandeCourante = 0;
+    robotState.vitesseDroiteCommandeCourante = 0;
+    
+    PWMSetSpeedConsigne(MOTEUR_GAUCHE, 20.0);
+    PWMSetSpeedConsigne(MOTEUR_DROIT, 20.0); 
+    
+    
+    
 while(1)
 {
     
