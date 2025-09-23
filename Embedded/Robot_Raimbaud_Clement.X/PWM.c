@@ -5,7 +5,8 @@
 #include "Toolbox.h"
 
 #define PWMPER 24.0
-#define acceleration 10
+#define acceleration 5
+#define talon 50.0
 
 void InitPWM(void) {
     PTCON2bits.PCLKDIV = 0b000; //Divide by 1
@@ -23,9 +24,7 @@ void InitPWM(void) {
     PTCONbits.PTEN = 1;
 }
 
-double talon = 50;
-
-void PWMSetSpeedConsigne(int moteur, float vitesseEnPourcents) {
+void PWMSetSpeedConsigne(float vitesseEnPourcents, int moteur) {
     if (vitesseEnPourcents > 100.0)
         vitesseEnPourcents = 100.0;
     else if (vitesseEnPourcents < -100.0)
