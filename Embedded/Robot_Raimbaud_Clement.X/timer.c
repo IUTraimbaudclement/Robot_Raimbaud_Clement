@@ -6,6 +6,8 @@
 #include "main.h"
 #include "ChipConfig.h"
 
+#define T1freq 300
+
 unsigned long timestamp;
 
 //Initialisation d?un timer 16 bits
@@ -24,8 +26,9 @@ void InitTimer1(void)
     IEC0bits.T1IE = 1; // Enable Timer interrupt
     T1CONbits.TON = 1; // Enable Timer
     
-    SetFreqTimer1(50);
+    SetFreqTimer1(T1freq);
 }
+
 
 
 //Initialisation d?un timer 16 bits
@@ -115,6 +118,7 @@ void SetFreqTimer4(float freq)
     PR4 = (int)(FCY / freq);
 }
 
+
 //Interruption du timer 1
 void __attribute__((interrupt, no_auto_psv)) _T1Interrupt(void) 
 {  
@@ -124,7 +128,7 @@ void __attribute__((interrupt, no_auto_psv)) _T1Interrupt(void)
     PWMUpdateSpeed();
     
     ADC1StartConversionSequence();
-
+    OperatingSystemLoop();
 }
 
 void resetTimestamp()
@@ -138,7 +142,6 @@ void __attribute__((interrupt, no_auto_psv)) _T4Interrupt(void)
     IFS1bits.T4IF = 0;
     LED_BLEUE_2 = !LED_BLEUE_2;
     
-    //OperatingSystemLoop();
     timestamp++;
 
 }
