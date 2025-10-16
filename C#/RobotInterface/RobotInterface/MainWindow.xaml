@@ -28,6 +28,7 @@
             <TextBox x:Name="TextBoxReception" TextWrapping="Wrap" Text="" Width="339" AcceptsReturn="True" IsReadOnly="True"/>
         </GroupBox>
         <Button x:Name="ButtonEnvoyer" Grid.Column="1" Content="Envoyer" Grid.Row="3" Width="100" Click="ButtonEnvoyer_Click"/>
+        <Button x:Name="ButtonClear" Grid.Column="3" Content="Clear" Grid.Row="3" Click="ButtonClear_Click" Margin="127,0,128,0"/>
 
     </Grid>
 </Window>
