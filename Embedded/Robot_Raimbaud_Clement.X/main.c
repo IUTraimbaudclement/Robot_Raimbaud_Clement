@@ -62,12 +62,17 @@ int main (void){
     // Boucle Principale
     /***********************************************************************************************/
     
+    SendMessage((unsigned char*) "TEST", 4);  
+    SendMessage((unsigned char*) "Bonjour", 7); 
+    SendMessage((unsigned char*) "Ceci est un", 11); 
+    SendMessage((unsigned char*) "Message du", 10); 
+    SendMessage((unsigned char*) "ROBOT !!", 8); 
+    SendMessage((unsigned char*) "Bye", 3); 
+    
+    
     uint8_t motorOn = 0;
     while(1)
     {
-        SendMessage((unsigned char*) "Bonjour", 7); 
-        //__delay32(40000000);
-
         if(motorOn == 0)
             stateRobot = STATE_ATTENTE;
         

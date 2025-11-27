@@ -23,7 +23,7 @@ void SendMessage(unsigned char* message, int length)
 
 void CB_TX1_Add(unsigned char value)
 {
-    cbTx1Buffer[CB_TX1_GetDataSize()] += value;
+    cbTx1Buffer[cbTx1Queue] = value;
     cbTx1Queue++; // ajoute 1 caractère à la queue
     
 }
@@ -43,13 +43,14 @@ void SendOne()
 {
     isTransmitting = 1;
     unsigned char value = CB_TX1_Get();
-    U1TXREG = value; // Transmit one character
     
     // Décale la queue de -1 pour la resynchroniser
     for(int i = 1; i < cbTx1Queue; i++)
         cbTx1Buffer[i - 1] = cbTx1Buffer[i];
-    cbTx1Buffer[cbTx1Queue] = 0; // supprimer le dernier élément
+    //cbTx1Buffer[cbTx1Queue] = 0; // supprimer le dernier élément
     cbTx1Queue--; // un élément envoyé, alors la queue a un caractère en moin
+    
+    U1TXREG = value; // Transmit one character
     
 }
 
