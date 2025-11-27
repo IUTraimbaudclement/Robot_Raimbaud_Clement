@@ -8,6 +8,10 @@
 #include "robot.h"
 #include "ADC.h"
 #include "main.h"
+#include "UART.h"
+#include "CB_TX1.h"
+
+unsigned char stateRobot;
 
 int main (void){
     /***********************************************************************************************/
@@ -48,13 +52,26 @@ int main (void){
     robotState.vitesseGaucheCommandeCourante = 0;
     robotState.vitesseDroiteCommandeCourante = 0;
     
+    
+    /***********************************************************************************************/
+    //    Initialisation UART
+    /***********************************************************************************************/
+    InitUART();
+    
     /***********************************************************************************************/
     // Boucle Principale
     /***********************************************************************************************/
+    
+    uint8_t motorOn = 0;
     while(1)
     {
+        SendMessage((unsigned char*) "Bonjour", 7); 
+        //__delay32(40000000);
 
-        if(ADCIsConversionFinished() == 1) 
+        if(motorOn == 0)
+            stateRobot = STATE_ATTENTE;
+        
+        if(ADCIsConversionFinished() == 1 && motorOn == 1) 
         {
             unsigned int * result = ADCGetResult();
             ADCClearConversionFinishedFlag();
@@ -104,8 +121,6 @@ int main (void){
     
     } // fin main
 }
-
-unsigned char stateRobot;
 
 void OperatingSystemLoop(void)
 {
