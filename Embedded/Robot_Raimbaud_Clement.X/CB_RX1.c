@@ -4,32 +4,39 @@
 #include "CB_RX1.h"
 #define CBRX1_BUFFER_SIZE 128
 
-int cbRx1Head;
-int cbRx1Tail;
+int cbRx1Queue = 0;
 unsigned char cbRx1Buffer[CBRX1_BUFFER_SIZE];
 
 void CB_RX1_Add(unsigned char value)
 {
     if(CB_RX1_GetRemainingSize()>0)
     {
-    ...
+        cbRx1Buffer[cbRx1Queue] = value;
+        cbRx1Queue++;
     }
 }
 
 unsigned char CB_RX1_Get(void)
 {
-    unsigned char value=cbRx1Buffer[cbRx1Tail];
-    ...
+    unsigned char value = cbRx1Buffer[cbRx1Queue];
+    
+        // Décale la queue de -1 pour la resynchroniser
+    for(int i = 1; i < cbRx1Queue; i++)
+        cbRx1Buffer[i - 1] = cbRx1Buffer[i];
+    //cbTx1Buffer[cbTx1Queue] = 0; // supprimer le dernier élément
+    cbRx1Queue--; // un élément envoyé, alors la queue a un caractère en moin
+    
     return value;
 }
 
 unsigned char CB_RX1_IsDataAvailable(void)
 {
-    if(cbRx1Head!=cbRx1Tail)
+    if(cbRx1Queue > 0)
     return 1;
     else
     return 0;
 }
+
 
 void __attribute__((interrupt, no_auto_psv)) _U1RXInterrupt(void) {
     IFS0bits.U1RXIF = 0; // clear RX interrupt flag
@@ -50,16 +57,12 @@ void __attribute__((interrupt, no_auto_psv)) _U1RXInterrupt(void) {
 int CB_RX1_GetDataSize(void)
 {
     //return size of data stored in circular buffer
-    int dataSize;
-    ...
-    return dataSize;
+    return cbRx1Queue;
 }
 
 int CB_RX1_GetRemainingSize(void)
 {
     //return size of remaining size in circular buffer
-    int remainingSize;
-    ...
-    return remainingSize;
+    return CBRX1_BUFFER_SIZE - cbRx1Queue;
 }
 
