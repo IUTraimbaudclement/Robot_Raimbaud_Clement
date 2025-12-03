@@ -18,10 +18,8 @@ namespace RobotInterface
         {
             byteListReceived = new Queue<byte>();
 
+
         }
-
-
-
 
 
     }

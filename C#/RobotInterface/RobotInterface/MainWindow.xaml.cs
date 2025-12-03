@@ -71,16 +71,10 @@ namespace RobotInterface
 
         private void ButtonEnvoyer_Click(object sender, RoutedEventArgs e)
         {
-            //    if(ButtonEnvoyer.Background == Brushes.RoyalBlue)
-            //    {
-            //        ButtonEnvoyer.Background = Brushes.Beige;
-            //        //return;
-            //    }
-
-            //    ButtonEnvoyer.Background = Brushes.RoyalBlue;
-
             serialPort1.WriteLine(TextBoxEmission.Text);
             TextBoxEmission.Clear();
+
+            //UartEncodeAndSendMessage();
 
         }
 
@@ -107,18 +101,39 @@ namespace RobotInterface
         private void ButtonTest_Click(object sender, RoutedEventArgs e)
         {
             List<byte> byteList = new List<byte>();
+
             for (int i = 0; i < 20; i++)
             {
                 byteList.Add((byte) (2 * i));
             }
 
             serialPort1.Write(byteList.ToArray(), 0, byteList.Count());
+        }
 
+        public void UartEncodeAndSendMessage(int msgFunction,
+            int msgPayloadLength, byte[] msgPayload)
+        {
+            byte checksum = CalculateChecksum(msgFunction, msgPayloadLength, msgPayload);
+            Console.Write(checksum);
 
 
 
         }
+        private byte CalculateChecksum(int msgFunction, int msgPayloadLength, byte[] msgPayload)
+        {
 
+            byte checksum = 0;
+
+            checksum ^= (byte) 0xFe;
+            checksum ^= Convert.ToByte(msgFunction);
+            checksum ^= Convert.ToByte(msgPayloadLength);
+            foreach(byte b in msgPayload)
+            {
+                checksum ^= b;
+            }
+
+            return checksum;
+        }
 
     }
 }

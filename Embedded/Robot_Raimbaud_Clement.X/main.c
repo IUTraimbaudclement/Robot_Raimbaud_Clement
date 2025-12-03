@@ -38,7 +38,7 @@ int main (void){
     /***********************************************************************************************/
     //    Initialisation pwm
     /***********************************************************************************************/
-    InitPWM();
+    //InitPWM();
     
     /***********************************************************************************************/
     //    Initialisation timers
@@ -71,13 +71,8 @@ int main (void){
     SendMessage((unsigned char*) "Bye", 3); 
     
     
-    uint8_t motorOn = 0;
     while(1)
     {
-        
-        if(motorOn == 0)
-            stateRobot = STATE_ATTENTE;
-        
         
         int i;
         for(i=0; i< CB_RX1_GetDataSize(); i++)
@@ -85,11 +80,9 @@ int main (void){
             unsigned char c = CB_RX1_Get();
             SendMessage(&c,1);
         }
-         
-        //__delay32(1000);
         
         
-        if(ADCIsConversionFinished() == 1 && motorOn == 1) 
+        if(ADCIsConversionFinished() == 1) 
         {
             unsigned int * result = ADCGetResult();
             ADCClearConversionFinishedFlag();

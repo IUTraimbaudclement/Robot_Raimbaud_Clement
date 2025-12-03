@@ -9,6 +9,7 @@ unsigned char cbRx1Buffer[CBRX1_BUFFER_SIZE];
 
 void CB_RX1_Add(unsigned char value)
 {
+
     if(CB_RX1_GetRemainingSize()>0)
     {
         cbRx1Buffer[cbRx1Queue] = value;
@@ -18,7 +19,7 @@ void CB_RX1_Add(unsigned char value)
 
 unsigned char CB_RX1_Get(void)
 {
-    unsigned char value = cbRx1Buffer[cbRx1Queue];
+    unsigned char value = cbRx1Buffer[0]; // Récupère le premier caractère de la queue
     
         // Décale la queue de -1 pour la resynchroniser
     for(int i = 1; i < cbRx1Queue; i++)
