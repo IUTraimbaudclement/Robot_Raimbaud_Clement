@@ -4,7 +4,8 @@
 #include "CB_TX1.h"
 #define CBTX1_BUFFER_SIZE 128
 
-int cbTx1Queue = 0;
+int cbTx1Head = 0;
+int cbTx1Tail = 0;
 unsigned char cbTx1Buffer[CBTX1_BUFFER_SIZE];
 unsigned char isTransmitting = 0;
 
@@ -23,18 +24,27 @@ void SendMessage(unsigned char* message, int length)
 
 void CB_TX1_Add(unsigned char value)
 {
-    cbTx1Buffer[cbTx1Queue] = value;
-    cbTx1Queue++; // ajoute 1 caractère à la queue
+    cbTx1Buffer[cbTx1Head] = value; // stocke un caractère dans la queue
     
+    cbTx1Head++;
+    if(cbTx1Head >= CBTX1_BUFFER_SIZE)
+        cbTx1Head = 0;  
 }
 unsigned char CB_TX1_Get(void)
 {
-    return cbTx1Buffer[0]; // renvoie le prochain caractère de la queue
+    char data = cbTx1Buffer[cbTx1Tail];
+    
+    cbTx1Tail++;
+    if(cbTx1Tail >= CBTX1_BUFFER_SIZE)
+        cbTx1Tail = 0;
+    
+    return data; // renvoie le prochain caractère de la queue
+   
 }
 
 void __attribute__((interrupt, no_auto_psv)) _U1TXInterrupt(void) {
     IFS0bits.U1TXIF = 0; // clear TX interrupt flag
-    if(cbTx1Queue > 0) // Si la queue n'est pas vide, on envoie un caractère sur TX
+    if(cbTx1Tail != cbTx1Head) // Si la queue n'est pas vide, on envoie un caractère sur TX
         SendOne();
     else
         isTransmitting = 0;
@@ -43,12 +53,6 @@ void SendOne()
 {
     isTransmitting = 1;
     unsigned char value = CB_TX1_Get();
-    
-    // Décale la queue de -1 pour la resynchroniser
-    for(int i = 1; i < cbTx1Queue; i++)
-        cbTx1Buffer[i - 1] = cbTx1Buffer[i];
-    //cbTx1Buffer[cbTx1Queue] = 0; // supprimer le dernier élément
-    cbTx1Queue--; // un élément envoyé, alors la queue a un caractère en moin
     
     U1TXREG = value; // Transmit one character
     
@@ -62,12 +66,19 @@ int CB_TX1_IsTranmitting(void)
 int CB_TX1_GetDataSize(void)
 {
     //return size of data stored in circular buffer
-    return cbTx1Queue;
+    int dataSize = 0;
+ 
+    if(cbTx1Head > cbTx1Tail)
+        dataSize = cbTx1Head - cbTx1Tail;
+    else if(cbTx1Head < cbTx1Tail)
+        dataSize = CBTX1_BUFFER_SIZE - (cbTx1Head - cbTx1Tail);    
+        
+    return dataSize;
 }
 
 int CB_TX1_GetRemainingSize(void)
 {
     //return size of remaining size in circular buffer
-    return (CBTX1_BUFFER_SIZE - cbTx1Queue);
+    return CBTX1_BUFFER_SIZE - CB_TX1_GetDataSize();
 }
 

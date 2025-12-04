@@ -4,7 +4,8 @@
 #include "CB_RX1.h"
 #define CBRX1_BUFFER_SIZE 128
 
-int cbRx1Queue = 0;
+int cbRx1Head = 0;
+int cbRx1Tail = 0;
 unsigned char cbRx1Buffer[CBRX1_BUFFER_SIZE];
 
 void CB_RX1_Add(unsigned char value)
@@ -12,30 +13,31 @@ void CB_RX1_Add(unsigned char value)
 
     if(CB_RX1_GetRemainingSize()>0)
     {
-        cbRx1Buffer[cbRx1Queue] = value;
-        cbRx1Queue++;
+        cbRx1Buffer[cbRx1Head] = value;
+        
+        cbRx1Head++;
+        if(cbRx1Head >= CBRX1_BUFFER_SIZE)
+            cbRx1Head = 0; 
     }
 }
 
 unsigned char CB_RX1_Get(void)
 {
-    unsigned char value = cbRx1Buffer[0]; // Récupère le premier caractère de la queue
-    
-        // Décale la queue de -1 pour la resynchroniser
-    for(int i = 1; i < cbRx1Queue; i++)
-        cbRx1Buffer[i - 1] = cbRx1Buffer[i];
-    //cbTx1Buffer[cbTx1Queue] = 0; // supprimer le dernier élément
-    cbRx1Queue--; // un élément envoyé, alors la queue a un caractère en moin
+    char value = cbRx1Buffer[cbRx1Tail];
+        
+    cbRx1Tail++;
+    if(cbRx1Tail >= CBRX1_BUFFER_SIZE)
+        cbRx1Tail = 0; 
     
     return value;
 }
 
 unsigned char CB_RX1_IsDataAvailable(void)
 {
-    if(cbRx1Queue > 0)
-    return 1;
+    if(cbRx1Head!=cbRx1Tail)
+        return 1;
     else
-    return 0;
+        return 0;
 }
 
 
@@ -58,12 +60,19 @@ void __attribute__((interrupt, no_auto_psv)) _U1RXInterrupt(void) {
 int CB_RX1_GetDataSize(void)
 {
     //return size of data stored in circular buffer
-    return cbRx1Queue;
+    int dataSize = 0;
+ 
+    if(cbRx1Head > cbRx1Tail)
+        dataSize = cbRx1Head - cbRx1Tail;
+    else if(cbRx1Head < cbRx1Tail)
+        dataSize = CBRX1_BUFFER_SIZE - (cbRx1Head - cbRx1Tail);    
+        
+    return dataSize;
 }
 
 int CB_RX1_GetRemainingSize(void)
 {
     //return size of remaining size in circular buffer
-    return CBRX1_BUFFER_SIZE - cbRx1Queue;
+    return CBRX1_BUFFER_SIZE - CB_RX1_GetDataSize();
 }
 
