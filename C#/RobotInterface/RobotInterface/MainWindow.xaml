@@ -8,28 +8,47 @@
         Title="MainWindow" Height="450" Width="800">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="30"/>
             <ColumnDefinition/>
-            <ColumnDefinition Width="30"/>
             <ColumnDefinition/>
-            <ColumnDefinition Width="30"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="30"/>
             <RowDefinition Height="5*"/>
-            <RowDefinition Height="30"/>
-            <RowDefinition/>
-            <RowDefinition Height="30"/>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="200"/>
         </Grid.RowDefinitions>
-        <GroupBox x:Name="Emission" Header="GroupBox" Grid.Row="1" BorderBrush="Black" Background="#FFDDDDDD" Grid.Column="1">
+        <GroupBox x:Name="Emission" Header="GroupBox" Grid.Row="0" Grid.Column="0" Margin="5">
             <TextBox x:Name="TextBoxEmission" TextWrapping="Wrap" Text="" TextChanged="TextBoxEmission_TextChanged" AcceptsReturn="True" KeyUp="TextBoxEmission_KeyUp"/>
         </GroupBox>
-        <GroupBox x:Name="Reception" Header="GroupBox" Grid.Row="1" Background="#FFDDDDDD" BorderBrush="Black" Grid.Column="3">
-            <TextBox x:Name="TextBoxReception" TextWrapping="Wrap" Text="" Width="339" AcceptsReturn="True" IsReadOnly="True"/>
+        <GroupBox x:Name="Reception" Header="GroupBox" Grid.Row="0" Grid.Column="1" Margin="5">
+            <TextBox x:Name="TextBoxReception" TextWrapping="Wrap" Text="" AcceptsReturn="True" IsReadOnly="True"/>
         </GroupBox>
-        <Button x:Name="ButtonEnvoyer" Grid.Column="1" Content="Envoyer" Grid.Row="3" Width="100" Click="ButtonEnvoyer_Click"/>
-        <Button x:Name="ButtonClear" Grid.Column="3" Content="Clear" Grid.Row="3" Click="ButtonClear_Click" Margin="127,0,128,0"/>
-        <Button x:Name="ButtonTest" Grid.Column="1" Content="Test" Grid.Row="3" Click="ButtonTest_Click" Margin="320,0,320,0" Grid.ColumnSpan="3"/>
-
+        <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.ColumnSpan="2" HorizontalAlignment="Center">
+            <Button x:Name="ButtonEnvoyer" Content="Envoyer" Width="100" Click="ButtonEnvoyer_Click" Margin="5"/>
+            <Button x:Name="ButtonClear"  Content="Clear" Width="100" Click="ButtonClear_Click" Margin="5" />
+            <Button x:Name="ButtonTest" Content="Test" Width="100" Click="ButtonTest_Click" Margin="5"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.ColumnSpan="2" HorizontalAlignment="Center" Width="400">
+            <GroupBox Header="Leds" Width="133">
+                <StackPanel Orientation="Vertical">
+                    <CheckBox x:Name="Led1" Content="Led1"/>
+                    <CheckBox x:Name="Led2" Content="Led2"/>
+                    <CheckBox x:Name="Led3" Content="Led3"/>
+                </StackPanel>
+            </GroupBox>
+            <GroupBox Header="Télémètres IR" Width="133">
+                <StackPanel Orientation="Vertical">
+                    <TextBox x:Name="IRGauche" Text="IR Gauche : 0 cm"/>
+                    <TextBox x:Name="IRCentre" Text="IR Centre : 0 cm"/>
+                    <TextBox x:Name="IRDroite" Text="IR Droite : 0 cm"/>
+                </StackPanel>
+            </GroupBox>
+            <GroupBox Header="Moteurs" Width="133">
+                <StackPanel Orientation="Vertical">
+                    <TextBox x:Name="VITGauche" Text="Vitesse Gauche : 0 %"/>
+                    <TextBox x:Name="VITDroite" Text="Vitesse Droite : 0 %"/>
+                </StackPanel>
+            </GroupBox>
+        </StackPanel>
+        
     </Grid>
 </Window>
