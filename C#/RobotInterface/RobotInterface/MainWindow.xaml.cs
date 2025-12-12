@@ -13,6 +13,8 @@ using System.IO.Ports;
 using System.Windows.Threading;
 using System;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using System.Security.RightsManagement;
+using KeyboardHook_NS;
 
 namespace RobotInterface
 {
@@ -25,12 +27,15 @@ namespace RobotInterface
         string receivedText = "";
         DispatcherTimer timerAffichage;
         Robot robot;
+        public bool autoControlActivated = true;
 
         public MainWindow()
         {
             serialPort1 = new ExtendedSerialPort("COM7", 115200, Parity.None, 8, StopBits.One);
             serialPort1.DataReceived += SerialPort1_DataReceived;
             serialPort1.Open();
+
+            robot = new Robot();
 
             InitializeComponent();
 
@@ -39,7 +44,36 @@ namespace RobotInterface
             timerAffichage.Tick += TimerAffichage_Tick;
             timerAffichage.Start();
 
-            robot = new Robot();
+            var _globalKeyboardHook = new GlobalKeyboardHook();
+            _globalKeyboardHook.KeyPressed += _globalKeyboardHook_KeyPressed;
+
+        }
+
+        
+        private void _globalKeyboardHook_KeyPressed(object? sender, KeyArgs e)
+        {
+
+            if (autoControlActivated == false)
+            {
+                switch (e.keyCode)
+                {
+                    case KeyCode.LEFT:
+                        UartEncodeAndSendMessage(0x0051, 1, new byte[] {(byte)StateRobot.STATE_TOURNE_VITE_GAUCHE });
+                        break;
+                    case KeyCode.RIGHT:
+                        UartEncodeAndSendMessage(0x0051, 1, new byte[] {(byte)StateRobot.STATE_TOURNE_VITE_DROITE });
+                        break;
+                    case KeyCode.UP:
+                        UartEncodeAndSendMessage(0x0051, 1, new byte[] {(byte)StateRobot.STATE_AVANCE });
+                        break;
+                    case KeyCode.DOWN:
+                    UartEncodeAndSendMessage(0x0051, 1, new byte[] {(byte)StateRobot.STATE_ARRET });
+                    break;
+                case KeyCode.PAGEDOWN:
+                    UartEncodeAndSendMessage(0x0051, 1, new byte[] {(byte)StateRobot.STATE_RECULE });
+                    break;
+                }
+            }
         }
 
         private void TimerAffichage_Tick(object? sender, EventArgs e)
@@ -115,6 +149,8 @@ namespace RobotInterface
             byte[] array = Encoding.ASCII.GetBytes(TextBoxEmission.Text);
             UartEncodeAndSendMessage(0x0080, array.Length, array);
             */
+
+            UartEncodeAndSendMessage((int) 0x0052, 1, new byte[] { 1 });
 
             UartEncodeAndSendMessage((int) Action.TEXT, "TEST".Length, Encoding.UTF8.GetBytes("TEST"));
 
@@ -251,7 +287,8 @@ namespace RobotInterface
             LED = 0x0020,
             IR = 0x0030,
             VIT = 0x0040,
-            STATE = 0x0050
+            STATE = 0x0050,
+            MODE = 0x0052
         }
 
         public enum StateRobot
@@ -377,10 +414,16 @@ namespace RobotInterface
                     " - " + instant.ToString() + " ms";
                     break;
 
-                    //TextBoxReception.Text += "STATE: " + getState + " | " + msgPayload[1] + " " + msgPayload[2] + " " + msgPayload[3] + " " + msgPayload[4] + "\r\n";
-                    //TextBoxReception.Text += "STATE: " + getState + " | " + millis + "\r\n";
+                //TextBoxReception.Text += "STATE: " + getState + " | " + msgPayload[1] + " " + msgPayload[2] + " " + msgPayload[3] + " " + msgPayload[4] + "\r\n";
+                //TextBoxReception.Text += "STATE: " + getState + " | " + millis + "\r\n";
 
-                    //break;
+                //break;
+                case Action.MODE:
+                    if (msgPayload[0] == 0x01)
+                        autoControlActivated = false;
+                    else if (msgPayload[0] == 0x00)
+                        autoControlActivated = true;
+                    break;
 
             }
 

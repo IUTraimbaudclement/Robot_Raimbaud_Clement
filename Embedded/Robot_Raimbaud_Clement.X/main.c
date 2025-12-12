@@ -13,8 +13,8 @@
 #include "CB_RX1.h"
 #include "UART_Protocol.h"
 
-unsigned char stateRobot;
-
+unsigned char stateRobot = STATE_ATTENTE;
+int count= 0;
 int main (void){
     /***********************************************************************************************/
     //    Initialisation oscillateur
@@ -53,7 +53,7 @@ int main (void){
     /***********************************************************************************************/
     robotState.vitesseGaucheCommandeCourante = 0;
     robotState.vitesseDroiteCommandeCourante = 0;
-    
+    robotState.mode = 0x00; // Mode Automatique
     
     /***********************************************************************************************/
     //    Initialisation UART
@@ -76,9 +76,8 @@ int main (void){
         for(i=0; i< CB_RX1_GetDataSize(); i++)
         {
             unsigned char c = CB_RX1_Get();
-            SendMessage(&c,1);
+            UartDecodeMessage(c);
         }
-        
         
         if(ADCIsConversionFinished() == 1) 
         {
@@ -99,8 +98,11 @@ int main (void){
             volts = ((float) result [4])* 3.3 / 4096;
             robotState.distanceTelemetreDroitToute = 34 / volts - 5;        
             
+            if(count++%10 ==0)
+            {
             unsigned char payload[3] = {robotState.distanceTelemetreGauche, robotState.distanceTelemetreCentre, robotState.distanceTelemetreDroit};
             UartEncodeAndSendMessage(0x0030, 3, payload);
+            }
             
             /*
             if(robotState.distanceTelemetreGaucheToute < 30.0)
@@ -143,6 +145,26 @@ void OperatingSystemLoop(void)
     
     switch (stateRobot)
     {
+        case STATE_ARRET:
+            PWMSetSpeedConsigne(0, MOTEUR_DROIT);
+            PWMSetSpeedConsigne(0, MOTEUR_GAUCHE);
+            stateRobot = STATE_ARRET_EN_COURS;
+            
+            UartEncodeAndSendMessage(0x0050, 5, payload);
+            break;
+        case STATE_ARRET_EN_COURS:
+            SetNextRobotStateInAutomaticMode();
+            break; 
+        case STATE_RECULE:
+            PWMSetSpeedConsigne(-30, MOTEUR_DROIT);
+            PWMSetSpeedConsigne(-30, MOTEUR_GAUCHE);
+            stateRobot = STATE_ARRET_EN_COURS; 
+            
+            UartEncodeAndSendMessage(0x0050, 5, payload);
+            break;
+        case STATE_RECULE_EN_COURS:
+            SetNextRobotStateInAutomaticMode();
+            break;             
         case STATE_ATTENTE:
             timestamp = 0;
             PWMSetSpeedConsigne(0, MOTEUR_DROIT);
@@ -240,6 +262,10 @@ unsigned char nextStateRobot=0;
 
 void SetNextRobotStateInAutomaticMode()
 {
+    if(robotState.mode == 0x01)
+        return; // Mode Manuel
+    
+    
     unsigned char positionObstacle = PAS_D_OBSTACLE;
     //éDtermination de la position des obstacles en fonction des ééètlmtres
     if ( robotState.distanceTelemetreDroit < 40 &&

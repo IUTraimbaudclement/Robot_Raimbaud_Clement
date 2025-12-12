@@ -2,6 +2,9 @@
 #include "UART_Protocol.h"
 #include "UART.h"
 #include "CB_TX1.h"
+#include "IO.h"
+#include "robot.h"
+#include "main.h"
 
 #define WAITING 0
 #define FUNCTION_MSB 1
@@ -10,6 +13,9 @@
 #define LENGTH_LSB 4
 #define PAYLOAD 5
 #define CHECKSUM 6
+
+#define SET_ROBOT_STATE 0x0051
+#define SET_ROBOT_MANUAL_CONTROL 0x0052
 
 unsigned char UartCalculateChecksum(int msgFunction, int msgPayloadLength, unsigned char* msgPayload)
 {
@@ -68,54 +74,51 @@ void UartDecodeMessage(unsigned char c)
     {
         case WAITING:
             if (c == 0xFE)
-                rcvState = StateReception.FunctionMSB;
+                rcvState = FUNCTION_MSB;
             break;
-        case StateReception.FunctionMSB:
+        case FUNCTION_MSB:
             msgDecodedFunction = c<<8;
-            rcvState = StateReception.FunctionLSB;
+            rcvState = FUNCTION_LSB;
             break;
-        case StateReception.FunctionLSB:
+        case FUNCTION_LSB:
             msgDecodedFunction += c << 0;
-            rcvState = StateReception.PayloadLengthMSB;
+            rcvState = LENGTH_MSB;
             break;
 
-        case StateReception.PayloadLengthMSB:
+        case LENGTH_MSB:
             msgDecodedPayloadLength = c << 8;
-            rcvState = StateReception.PayloadLengthLSB;
+            rcvState = LENGTH_LSB;
             break;
-        case StateReception.PayloadLengthLSB:
-
+            
+        case LENGTH_LSB:
             msgDecodedPayloadLength += c << 0;
-            msgDecodedPayload = new byte[msgDecodedPayloadLength];
             msgDecodedPayloadIndex = 0;
             if(msgDecodedPayloadLength>0)
-                rcvState = StateReception.Payload;
+                rcvState = PAYLOAD;
             else
-                rcvState = StateReception.CheckSum;
+                rcvState = CHECKSUM;
             break;
 
-        case StateReception.Payload:
+        case PAYLOAD:
             msgDecodedPayload[msgDecodedPayloadIndex] = c;
             msgDecodedPayloadIndex++;
             if (msgDecodedPayloadIndex >= msgDecodedPayloadLength)
-                rcvState = StateReception.CheckSum;
+                rcvState = CHECKSUM;
 
             break;
 
-        case StateReception.CheckSum:
-            byte receivedChecksum = c;
+        case CHECKSUM: ;
+            unsigned char receivedChecksum = c;
 
-            byte calculatedChecksum = CalculateChecksum(msgDecodedFunction, msgDecodedPayloadLength, msgDecodedPayload);
+            unsigned char calculatedChecksum = UartCalculateChecksum(msgDecodedFunction, msgDecodedPayloadLength, msgDecodedPayload);
 
             if(calculatedChecksum == receivedChecksum)
-                ProcessDecodedMessage(msgDecodedFunction, msgDecodedPayloadLength, msgDecodedPayload);
-            else          
-                TextBoxReception.Text += "Erreur de Trame: " + Encoding.UTF8.GetString(msgDecodedPayload, 0, msgDecodedPayload.Length);
+                UartProcessDecodedMessage(msgDecodedFunction, msgDecodedPayloadLength, msgDecodedPayload);
 
-            rcvState = StateReception.Waiting;
+            rcvState = WAITING;
             break;
         default:
-            rcvState = StateReception.Waiting;
+            rcvState = WAITING;
             break;
     }
 }
@@ -125,6 +128,53 @@ void UartProcessDecodedMessage(int function, int payloadLength, unsigned char* p
     //Fonction appelee apres le decodage pour executer l?action
     //correspondant au message recu
     //...
+    
+    switch (function)
+    {
+        case SET_ROBOT_STATE:
+            SetRobotState(payload[0]);
+            break;
+        case SET_ROBOT_MANUAL_CONTROL:
+            SetRobotAutoControlState(payload[0]);
+            break;
+        default:
+            break;
+    }
+}
+    
+void SetRobotAutoControlState(unsigned char c)
+{
+    if(c == 0x00 || c == 0x01)
+    {
+        unsigned char payload[1] = { c };
+        UartEncodeAndSendMessage((int) 0x0052, (int) 0x0001, payload);
+        robotState.mode = c;    
+    }
+
+    if(c == 0x01)
+        stateRobot = STATE_ARRET; // Arrete de robot
+}
+
+void SetRobotState(unsigned char c)
+{
+    switch(c)
+    {
+        case STATE_TOURNE_VITE_GAUCHE:
+            stateRobot = STATE_TOURNE_VITE_GAUCHE;
+            break;
+        case STATE_TOURNE_VITE_DROITE:
+            stateRobot = STATE_TOURNE_VITE_DROITE;
+            break;        
+        case STATE_AVANCE:
+            stateRobot = STATE_AVANCE;
+            break;          
+        case STATE_ARRET:
+            stateRobot = STATE_ARRET;
+            break; 
+        case STATE_RECULE:
+            stateRobot = STATE_RECULE;
+            break;    
+    }  
 }
 
 //*************************************************************************/

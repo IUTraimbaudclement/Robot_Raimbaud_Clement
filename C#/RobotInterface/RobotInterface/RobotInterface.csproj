@@ -9,7 +9,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\IUT_Shutiaiev_Beji\C#\ExtendedSerialPort\ExtendedSerialPort\ExtendedSerialPort.csproj" />
+    <ProjectReference Include="..\..\ExtendedSerialPort .NET6\ExtendedSerialPort\ExtendedSerialPort\ExtendedSerialPort.csproj" />
+    <ProjectReference Include="..\..\KeyboardHook\KeyboardHook.csproj" />
   </ItemGroup>
 
 </Project>

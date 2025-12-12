@@ -128,7 +128,8 @@ void __attribute__((interrupt, no_auto_psv)) _T1Interrupt(void)
     PWMUpdateSpeed();
     
     ADC1StartConversionSequence();
-    OperatingSystemLoop();
+    OperatingSystemLoop(); 
+
 }
 
 void resetTimestamp()

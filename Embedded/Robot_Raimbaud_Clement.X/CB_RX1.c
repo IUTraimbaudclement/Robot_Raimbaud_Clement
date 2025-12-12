@@ -24,7 +24,8 @@ void CB_RX1_Add(unsigned char value)
 unsigned char CB_RX1_Get(void)
 {
     char value = cbRx1Buffer[cbRx1Tail];
-        
+
+    
     cbRx1Tail++;
     if(cbRx1Tail >= CBRX1_BUFFER_SIZE)
         cbRx1Tail = 0; 

@@ -28,6 +28,7 @@
 #define OBSTACLE_EN_FACE 3
 #define OBSTACLE_GAUCHE_DROITE 4
 
+extern unsigned char stateRobot;
 
 void OperatingSystemLoop(void);
 void SetNextRobotStateInAutomaticMode(void);
