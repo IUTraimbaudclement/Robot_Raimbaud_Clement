@@ -288,7 +288,8 @@ namespace RobotInterface
             IR = 0x0030,
             VIT = 0x0040,
             STATE = 0x0050,
-            MODE = 0x0052
+            MODE = 0x0052,
+            POSITION = 0x0061
         }
 
         public enum StateRobot
@@ -413,16 +414,22 @@ namespace RobotInterface
                     ((StateRobot) (msgPayload[0])).ToString() +
                     " - " + instant.ToString() + " ms";
                     break;
-
-                //TextBoxReception.Text += "STATE: " + getState + " | " + msgPayload[1] + " " + msgPayload[2] + " " + msgPayload[3] + " " + msgPayload[4] + "\r\n";
-                //TextBoxReception.Text += "STATE: " + getState + " | " + millis + "\r\n";
-
-                //break;
                 case Action.MODE:
                     if (msgPayload[0] == 0x01)
                         autoControlActivated = false;
                     else if (msgPayload[0] == 0x00)
                         autoControlActivated = true;
+                    break;
+
+                case Action.POSITION:
+                    int instantPosition = (((int)msgPayload[1]) << 24) + (((int)msgPayload[2]) << 16) + (((int)msgPayload[3]) << 8) + ((int)msgPayload[4]);
+
+                    robot.positionXOdo = BitConverter.ToSingle(msgPayload, 4);
+                    robot.positionYOdo = BitConverter.ToSingle(msgPayload, 8);
+
+                    TextBoxReception.Text += "X0: " + robot.positionXOdo + " | Y0: " + robot.positionYOdo + " | " + instantPosition.ToString() + " ms" + "\r\n";
+
+
                     break;
 
             }

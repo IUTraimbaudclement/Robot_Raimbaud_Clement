@@ -5,8 +5,9 @@
 #include "ADC.h"
 #include "main.h"
 #include "ChipConfig.h"
+#include "QEI.h"
 
-#define T1freq 300
+#define T1freq 250
 
 unsigned long timestamp;
 
@@ -119,6 +120,7 @@ void SetFreqTimer4(float freq)
 }
 
 
+int t1add = 0;
 //Interruption du timer 1
 void __attribute__((interrupt, no_auto_psv)) _T1Interrupt(void) 
 {  
@@ -129,6 +131,10 @@ void __attribute__((interrupt, no_auto_psv)) _T1Interrupt(void)
     
     ADC1StartConversionSequence();
     OperatingSystemLoop(); 
+    QEIUpdateData();
+    
+    if(t1add++ % 10 == 0)
+        SendPositionData();
 
 }
 

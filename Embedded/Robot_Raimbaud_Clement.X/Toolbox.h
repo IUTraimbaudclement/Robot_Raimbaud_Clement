@@ -9,5 +9,7 @@ float Min(float, float);
 float LimitToInterval(float, float, float);
 float RadianToDegree(float);
 float DegreeToRadian(float);
+void getBytesFromFloat(unsigned char, int, float);
+void getBytesFromInt32(unsigned char, int, long);
 
 #endif /* TOOLBOX_H */
