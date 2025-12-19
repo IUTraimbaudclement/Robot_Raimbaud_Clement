@@ -50,9 +50,10 @@ void InitIO()
     _RP79R = 0b00001; //Remappe la sortie Tx1 vers RP...
 
     _QEA2R = 97; //assign QEI A to pin RP97
-    _QEB2R = 96; //assign QEI B to pin RP96
-    _QEA1R = 70; //assign QEI A to pin RP70
-    _QEB1R = 69; //assign QEI B to pin RP69
+    _QEB2R = 113; //assign QEI B to pin RP96
+    
+    _QEA1R = 126; //assign QEI A to pin RP70
+    _QEB1R = 124; //assign QEI B to pin RP69
 
     LockIO(); // On lock les registres d'entrées/sorties, ainsi que les registres des PPS
 }

@@ -28,6 +28,7 @@ namespace RobotInterface
         DispatcherTimer timerAffichage;
         Robot robot;
         public bool autoControlActivated = true;
+        GlobalKeyboardHook _globalKeyboardHook;
 
         public MainWindow()
         {
@@ -44,7 +45,7 @@ namespace RobotInterface
             timerAffichage.Tick += TimerAffichage_Tick;
             timerAffichage.Start();
 
-            var _globalKeyboardHook = new GlobalKeyboardHook();
+            _globalKeyboardHook = new GlobalKeyboardHook();
             _globalKeyboardHook.KeyPressed += _globalKeyboardHook_KeyPressed;
 
         }
@@ -150,7 +151,7 @@ namespace RobotInterface
             UartEncodeAndSendMessage(0x0080, array.Length, array);
             */
 
-            UartEncodeAndSendMessage((int) 0x0052, 1, new byte[] { 1 });
+            UartEncodeAndSendMessage((int) Action.MODE, 1, new byte[] { 1 });
 
             UartEncodeAndSendMessage((int) Action.TEXT, "TEST".Length, Encoding.UTF8.GetBytes("TEST"));
 
@@ -422,7 +423,9 @@ namespace RobotInterface
                     break;
 
                 case Action.POSITION:
-                    int instantPosition = (((int)msgPayload[1]) << 24) + (((int)msgPayload[2]) << 16) + (((int)msgPayload[3]) << 8) + ((int)msgPayload[4]);
+                    int instantPosition = (((int)msgPayload[0]) << 24) + (((int)msgPayload[1]) << 16) + (((int)msgPayload[2]) << 8) + ((int)msgPayload[3]);
+                    //robot.positionXOdo = (((int)msgPayload[4]) << 24) + (((int)msgPayload[5]) << 16) + (((int)msgPayload[6]) << 8) + ((int)msgPayload[7]);
+                    //robot.positionYOdo = (((int)msgPayload[8]) << 24) + (((int)msgPayload[9]) << 16) + (((int)msgPayload[10]) << 8) + ((int)msgPayload[11]);
 
                     robot.positionXOdo = BitConverter.ToSingle(msgPayload, 4);
                     robot.positionYOdo = BitConverter.ToSingle(msgPayload, 8);

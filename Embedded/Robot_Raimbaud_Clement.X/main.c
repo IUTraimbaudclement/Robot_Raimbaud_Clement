@@ -12,6 +12,7 @@
 #include "CB_TX1.h"
 #include "CB_RX1.h"
 #include "UART_Protocol.h"
+#include "QEI.h"
 
 unsigned char stateRobot = STATE_ATTENTE;
 int count= 0;
@@ -59,6 +60,15 @@ int main (void){
     //    Initialisation UART
     /***********************************************************************************************/
     InitUART();
+    
+      /***********************************************************************************************/
+    //    Initialisation ENCODEUR
+    /***********************************************************************************************/  
+    InitQEI1();
+    InitQEI2();
+    
+    robotState.xPosFromOdometry = 0;
+    robotState.yPosFromOdometry = 0;
     
     /***********************************************************************************************/
     // Boucle Principale

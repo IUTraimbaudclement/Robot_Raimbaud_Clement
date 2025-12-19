@@ -57,3 +57,12 @@ void getBytesFromInt32(unsigned char *p, int index, long in)
         p[index + i] = f_ptr[3-i];
 }
 
+
+void getBytesFromDouble(unsigned char *p, int index, double d)
+{
+    int i;
+    unsigned char *f_ptr = (unsigned char*)&d;
+    for (i = 0; i < 8; i++)
+        p[index + i] = f_ptr[i];
+}
+

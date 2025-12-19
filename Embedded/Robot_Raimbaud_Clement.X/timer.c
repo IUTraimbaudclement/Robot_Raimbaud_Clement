@@ -133,7 +133,7 @@ void __attribute__((interrupt, no_auto_psv)) _T1Interrupt(void)
     OperatingSystemLoop(); 
     QEIUpdateData();
     
-    if(t1add++ % 10 == 0)
+    if(t1add++ % 250 == 0)
         SendPositionData();
 
 }
