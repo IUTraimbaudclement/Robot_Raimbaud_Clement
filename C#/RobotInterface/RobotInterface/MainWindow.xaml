@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:oscillo="clr-namespace:WpfOscilloscopeControl;assembly=WpfOscilloscopeControl"        
         xmlns:local="clr-namespace:RobotInterface"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
@@ -22,6 +23,9 @@
         <GroupBox x:Name="Reception" Header="GroupBox" Grid.Row="0" Grid.Column="1" Margin="5">
             <TextBox x:Name="TextBoxReception" TextWrapping="Wrap" Text="" AcceptsReturn="True" IsReadOnly="True"/>
         </GroupBox>
+
+        <oscillo:WpfOscilloscope x:Name="oscilloSpeed" Grid.Row="2" Grid.Column="0" Margin="10,10,205,10"/>
+
         <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.ColumnSpan="2" HorizontalAlignment="Center">
             <Button x:Name="ButtonEnvoyer" Content="Envoyer" Width="100" Click="ButtonEnvoyer_Click" Margin="5"/>
             <Button x:Name="ButtonClear"  Content="Clear" Width="100" Click="ButtonClear_Click" Margin="5" />
@@ -49,6 +53,6 @@
                 </StackPanel>
             </GroupBox>
         </StackPanel>
-        
+
     </Grid>
 </Window>

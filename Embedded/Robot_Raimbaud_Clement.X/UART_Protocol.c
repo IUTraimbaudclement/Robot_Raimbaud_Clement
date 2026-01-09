@@ -77,7 +77,7 @@ void UartDecodeMessage(unsigned char c)
                 rcvState = FUNCTION_MSB;
             break;
         case FUNCTION_MSB:
-            msgDecodedFunction = c<<8;
+            msgDecodedFunction = c << 8;
             rcvState = FUNCTION_LSB;
             break;
         case FUNCTION_LSB:

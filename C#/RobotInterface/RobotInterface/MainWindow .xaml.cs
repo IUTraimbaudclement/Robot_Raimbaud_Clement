@@ -15,6 +15,8 @@ using System;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using System.Security.RightsManagement;
 using KeyboardHook_NS;
+using WpfOscilloscopeControl;
+using static SciChart.Drawing.Utility.PointUtil;
 
 namespace RobotInterface
 {
@@ -29,6 +31,9 @@ namespace RobotInterface
         Robot robot;
         public bool autoControlActivated = true;
         GlobalKeyboardHook _globalKeyboardHook;
+        int lineVit = 0;
+        int linePos = 1;
+
 
         public MainWindow()
         {
@@ -48,9 +53,15 @@ namespace RobotInterface
             _globalKeyboardHook = new GlobalKeyboardHook();
             _globalKeyboardHook.KeyPressed += _globalKeyboardHook_KeyPressed;
 
+            oscilloSpeed.AddOrUpdateLine(lineVit, 200, "Vitesse");
+            oscilloSpeed.AddOrUpdateLine(linePos, 200, "Position");
+
+            oscilloSpeed.ChangeLineColor(lineVit, Color.FromRgb(0, 0, 255));
+            oscilloSpeed.ChangeLineColor(linePos, Color.FromRgb(255, 0, 0));
+
         }
 
-        
+
         private void _globalKeyboardHook_KeyPressed(object? sender, KeyArgs e)
         {
 
@@ -88,8 +99,6 @@ namespace RobotInterface
                     //TextBoxReception.Text += "0x"+data.ToString("X2")+" ";    
                     DecodeMessage(data);
                 }
-
-
             }
 
         }
@@ -119,6 +128,7 @@ namespace RobotInterface
 
         private void TextBoxEmission_KeyUp(object sender, KeyEventArgs e)
         {
+            
             if (e.Key == Key.Enter)
             {
                 TextBoxEmission.Text = TextBoxEmission.Text.Substring(0, TextBoxEmission.Text.Length - 1);
@@ -127,8 +137,7 @@ namespace RobotInterface
                 ButtonEnvoyer.Background = Brushes.Beige;
             }
 
-
-
+           
 
         }
 
@@ -429,8 +438,23 @@ namespace RobotInterface
 
                     robot.positionXOdo = BitConverter.ToSingle(msgPayload, 4);
                     robot.positionYOdo = BitConverter.ToSingle(msgPayload, 8);
+                    float angleRad = BitConverter.ToSingle(msgPayload, 12);
 
-                    TextBoxReception.Text += "X0: " + robot.positionXOdo + " | Y0: " + robot.positionYOdo + " | " + instantPosition.ToString() + " ms" + "\r\n";
+                    robot.angle = (360 / (2 * Math.PI)) * angleRad;
+
+                    TextBoxReception.Text += "X0: " + robot.positionXOdo.ToString("N2") +
+                        " | Y0: " + robot.positionYOdo.ToString("N2") +
+                        " | ANGLE: " + robot.angle.ToString("N2") +
+                        " | TEMPS: " + instantPosition.ToString() + " ms" + "\r\n";
+
+
+                    /*
+                    float g = BitConverter.ToSingle(msgPayload, 16);
+                    float d = BitConverter.ToSingle(msgPayload, 20);
+
+                    TextBoxReception.Text += "GAUCHE: " + g.ToString("N2") +
+                        " | DROITE: " + d.ToString("N2") + "\r\n";
+                    */
 
 
                     break;
