@@ -95,8 +95,7 @@ namespace RobotInterface
             {
                 while (robot.byteListReceived.Count() > 0)
                 {
-                    Byte data = robot.byteListReceived.Dequeue();
-                    //TextBoxReception.Text += "0x"+data.ToString("X2")+" ";    
+                    Byte data = robot.byteListReceived.Dequeue(); 
                     DecodeMessage(data);
                 }
             }
@@ -119,7 +118,7 @@ namespace RobotInterface
 
         private void ButtonEnvoyer_Click(object sender, RoutedEventArgs e)
         {
-            byte[] array = Encoding.ASCII.GetBytes(TextBoxEmission.Text);
+            byte[] array = Encoding.ASCII.GetBytes(TextBoxEmission.Text); // Converti le texte en tableau de données ASCII
             UartEncodeAndSendMessage(0x0080, array.Length, array);
 
             TextBoxEmission.Clear();
@@ -129,21 +128,17 @@ namespace RobotInterface
         private void TextBoxEmission_KeyUp(object sender, KeyEventArgs e)
         {
             
-            if (e.Key == Key.Enter)
+            if (e.Key == Key.Enter) // Si la touche appuyé est entrée
             {
-                TextBoxEmission.Text = TextBoxEmission.Text.Substring(0, TextBoxEmission.Text.Length - 1);
-
-                ButtonEnvoyer_Click(sender, new RoutedEventArgs());
-                ButtonEnvoyer.Background = Brushes.Beige;
+                ButtonEnvoyer_Click(sender, new RoutedEventArgs()); // On simule un appui sur le bouton "Envoyer"
             }
 
-           
 
         }
 
         private void ButtonClear_Click(object sender, RoutedEventArgs e)
         {
-            TextBoxReception.Text = "";
+            TextBoxReception.Clear(); // Supprime tout le contenu de la boite
         }
 
         private void ButtonTest_Click(object sender, RoutedEventArgs e)
