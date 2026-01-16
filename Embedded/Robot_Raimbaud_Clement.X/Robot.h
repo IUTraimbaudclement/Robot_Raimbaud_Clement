@@ -1,6 +1,7 @@
 #ifndef ROBOT_H
 #define ROBOT_H
 
+
 typedef struct robotStateBITS {
     union {
         struct {
@@ -28,6 +29,8 @@ typedef struct robotStateBITS {
             };
     };
 } ROBOT_STATE_BITS;
+
 extern volatile ROBOT_STATE_BITS robotState;
+
 
 #endif /* ROBOT_H */

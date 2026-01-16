@@ -3,8 +3,9 @@
 #include "UART.h"
 #include "CB_TX1.h"
 #include "IO.h"
-#include "robot.h"
 #include "main.h"
+#include "Robot.h"
+#include "asservissement.h"
 
 #define WAITING 0
 #define FUNCTION_MSB 1
@@ -16,6 +17,7 @@
 
 #define SET_ROBOT_STATE 0x0051
 #define SET_ROBOT_MANUAL_CONTROL 0x0052
+#define CORRECTEUR_PID 0x0070
 
 unsigned char UartCalculateChecksum(int msgFunction, int msgPayloadLength, unsigned char* msgPayload)
 {
@@ -137,11 +139,31 @@ void UartProcessDecodedMessage(int function, int payloadLength, unsigned char* p
         case SET_ROBOT_MANUAL_CONTROL:
             SetRobotAutoControlState(payload[0]);
             break;
+        case CORRECTEUR_PID:
+            sendPIDcorrection(payload);
+            break;
         default:
             break;
     }
 }
     
+void sendPIDcorrection(unsigned char* payload)
+{
+        
+    double Kp = (double) ((payload[1] << 24) + (payload[2] << 16) + (payload[3] << 8) + payload[4]);
+    double Ki = (double) (payload[5] << 24 + payload[6] << 16 + payload[7] << 8 + payload[8]);
+    double Kd = (double) (payload[9] << 24 + payload[10] << 16 + payload[11] << 8 + payload[12]);
+    double maxP = (double) (payload[13] << 24 + payload[14] << 16 + payload[15] << 8 + payload[16]);
+    double maxI = (double) (payload[17] << 24 + payload[18] << 16 + payload[19] << 8 + payload[20]);
+    double maxD = (double) (payload[21] << 24 + payload[22] << 16 + payload[23] << 8 + payload[24]);
+
+    if(payload[0] == 1) // Linéaire 
+        SetupPidAsservissement(PidX, Kp, Ki, Kd, maxP, maxI, maxD);
+    else if(payload[0] == 2) // Angulaire 
+        SetupPidAsservissement(PidTheta, Kp, Ki, Kd, maxP, maxI, maxD);  
+     
+}
+
 void SetRobotAutoControlState(unsigned char c)
 {
     if(c == 0x00 || c == 0x01)

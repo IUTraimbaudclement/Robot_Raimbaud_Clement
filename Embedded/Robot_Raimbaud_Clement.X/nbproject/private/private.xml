@@ -3,22 +3,20 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Github/Robot_Raimbaud_Clement/Embedded/Robot_Raimbaud_Clement.X/CB_TX1.c</file>
+            <file>file:/C:/Github/Robot_Raimbaud_Clement/Embedded/Robot_Raimbaud_Clement.X/Robot.c</file>
             <file>file:/C:/Github/Robot_Raimbaud_Clement/Embedded/Robot_Raimbaud_Clement.X/main.h</file>
-            <file>file:/C:/Github/Robot_Raimbaud_Clement/Embedded/Robot_Raimbaud_Clement.X/IO.h</file>
             <file>file:/C:/Github/Robot_Raimbaud_Clement/Embedded/Robot_Raimbaud_Clement.X/CB_RX1.c</file>
-            <file>file:/C:/Github/Robot_Raimbaud_Clement/Embedded/Robot_Raimbaud_Clement.X/Toolbox.h</file>
-            <file>file:/C:/Github/Robot_Raimbaud_Clement/Embedded/Robot_Raimbaud_Clement.X/Robot.h</file>
             <file>file:/C:/Github/Robot_Raimbaud_Clement/Embedded/Robot_Raimbaud_Clement.X/main.c</file>
-            <file>file:/C:/Github/Robot_Raimbaud_Clement/Embedded/Robot_Raimbaud_Clement.X/Toolbox.c</file>
+            <file>file:/C:/Github/Robot_Raimbaud_Clement/Embedded/Robot_Raimbaud_Clement.X/Robot.h</file>
+            <file>file:/C:/Github/Robot_Raimbaud_Clement/Embedded/Robot_Raimbaud_Clement.X/asservissement.h</file>
             <file>file:/C:/Github/Robot_Raimbaud_Clement/Embedded/Robot_Raimbaud_Clement.X/IO.c</file>
-            <file>file:/C:/Github/Robot_Raimbaud_Clement/Embedded/Robot_Raimbaud_Clement.X/timer.c</file>
             <file>file:/C:/Github/Robot_Raimbaud_Clement/Embedded/Robot_Raimbaud_Clement.X/UART_Protocol.h</file>
+            <file>file:/C:/Github/Robot_Raimbaud_Clement/Embedded/Robot_Raimbaud_Clement.X/timer.c</file>
+            <file>file:/C:/Github/Robot_Raimbaud_Clement/Embedded/Robot_Raimbaud_Clement.X/asservissement.c</file>
             <file>file:/C:/Github/Robot_Raimbaud_Clement/Embedded/Robot_Raimbaud_Clement.X/QEI.h</file>
+            <file>file:/C:/Github/Robot_Raimbaud_Clement/Embedded/Robot_Raimbaud_Clement.X/UART.c</file>
             <file>file:/C:/Github/Robot_Raimbaud_Clement/Embedded/Robot_Raimbaud_Clement.X/QEI.c</file>
-            <file>file:/C:/Github/Robot_Raimbaud_Clement/Embedded/Robot_Raimbaud_Clement.X/PWM.c</file>
             <file>file:/C:/Github/Robot_Raimbaud_Clement/Embedded/Robot_Raimbaud_Clement.X/UART_Protocol.c</file>
-            <file>file:/C:/Github/Robot_Raimbaud_Clement/Embedded/Robot_Raimbaud_Clement.X/ADC.c</file>
         </group>
     </open-files>
 </project-private>

@@ -88,6 +88,7 @@ namespace RobotInterface
             }
         }
 
+
         private void TimerAffichage_Tick(object? sender, EventArgs e)
         {
 
@@ -166,6 +167,27 @@ namespace RobotInterface
             UartEncodeAndSendMessage((int) Action.IR, 3, new byte[] { 15, 19, 87 });
 
             UartEncodeAndSendMessage((int) Action.VIT, 2, new byte[] { 15, 19 });
+
+
+            double Kp = 0;
+            double Ki = 0;
+            double Kd = 0;
+
+            double maxP = 0;
+            double maxI = 0;
+            double maxD = 0;
+
+            List<byte> CorrSend = new List<byte>();
+
+            CorrSend.Add((byte) Corr.lineaire);
+            CorrSend.AddRange(BitConverter.GetBytes(Kp));
+            CorrSend.AddRange(BitConverter.GetBytes(Ki));
+            CorrSend.AddRange(BitConverter.GetBytes(Kd));
+            CorrSend.AddRange(BitConverter.GetBytes(maxP));
+            CorrSend.AddRange(BitConverter.GetBytes(maxI));
+            CorrSend.AddRange(BitConverter.GetBytes(maxD));
+
+            UartEncodeAndSendMessage((int) Action.PID, CorrSend.Count(), CorrSend.ToArray());
 
         }
 
@@ -294,7 +316,14 @@ namespace RobotInterface
             VIT = 0x0040,
             STATE = 0x0050,
             MODE = 0x0052,
-            POSITION = 0x0061
+            POSITION = 0x0061,
+            PID = 0x0070
+        }
+
+        public enum Corr
+        {
+            lineaire = 1,
+            angulaire = 2,
         }
 
         public enum StateRobot

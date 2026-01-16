@@ -17,6 +17,7 @@
       <itemPath>CB_RX1.h</itemPath>
       <itemPath>UART_Protocol.h</itemPath>
       <itemPath>QEI.h</itemPath>
+      <itemPath>asservissement.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -43,6 +44,7 @@
       <itemPath>CB_RX1.c</itemPath>
       <itemPath>UART_Protocol.c</itemPath>
       <itemPath>QEI.c</itemPath>
+      <itemPath>asservissement.c</itemPath>
     </logicalFolder>
   </logicalFolder>
   <projectmakefile>Makefile</projectmakefile>
@@ -296,7 +298,7 @@
         <property key="debugoptions.debug-startup" value="Use system settings"/>
         <property key="debugoptions.reset-behaviour" value="Use system settings"/>
         <property key="debugoptions.simultaneous.debug" value="false"/>
-        <property key="debugoptions.useswbreakpoints" value="true"/>
+        <property key="debugoptions.useswbreakpoints" value="false"/>
         <property key="event.recorder.debugger.behavior" value="Running"/>
         <property key="event.recorder.enabled" value="false"/>
         <property key="event.recorder.scvd.files" value=""/>
