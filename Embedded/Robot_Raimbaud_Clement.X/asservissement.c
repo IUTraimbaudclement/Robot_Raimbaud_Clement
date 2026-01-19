@@ -1,5 +1,5 @@
 #include "asservissement.h"
-
+#include "Robot.h"
 
 void SetupPidAsservissement(volatile PidCorrector* PidCorr, double Kp, double Ki, double Kd, double proportionelleMax, double integralMax, double deriveeMax)
 {

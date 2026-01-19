@@ -101,6 +101,14 @@ namespace RobotInterface
                 }
             }
 
+
+            asservSpeedDisplay.UpdateIndependantOdometrySpeed(1, 2);
+            asservSpeedDisplay.UpdateIndependantSpeedCommandValues(3, 4);
+
+            asservSpeedDisplay.UpdatePolarOdometrySpeed(1, 2);
+            asservSpeedDisplay.UpdatePolarSpeedCommandValues(3, 4);
+
+
         }
 
         public void SerialPort1_DataReceived(object sender, DataReceivedArgs e)
@@ -156,28 +164,29 @@ namespace RobotInterface
             UartEncodeAndSendMessage(0x0080, array.Length, array);
             */
 
-            UartEncodeAndSendMessage((int) Action.MODE, 1, new byte[] { 1 });
+            //UartEncodeAndSendMessage((int) Action.MODE, 1, new byte[] { 1 });
 
             UartEncodeAndSendMessage((int) Action.TEXT, "TEST".Length, Encoding.UTF8.GetBytes("TEST"));
 
-            UartEncodeAndSendMessage((int) Action.LED, 2, new byte[] { 1, 1 });
-            UartEncodeAndSendMessage((int) Action.LED, 2, new byte[] { 2, 1 });
-            UartEncodeAndSendMessage((int) Action.LED, 2, new byte[] { 3, 1 });
+            //UartEncodeAndSendMessage((int) Action.LED, 2, new byte[] { 1, 1 });
+            //UartEncodeAndSendMessage((int) Action.LED, 2, new byte[] { 2, 1 });
+            //UartEncodeAndSendMessage((int) Action.LED, 2, new byte[] { 3, 1 });
 
-            UartEncodeAndSendMessage((int) Action.IR, 3, new byte[] { 15, 19, 87 });
+            //UartEncodeAndSendMessage((int) Action.IR, 3, new byte[] { 15, 19, 87 });
 
-            UartEncodeAndSendMessage((int) Action.VIT, 2, new byte[] { 15, 19 });
+            //UartEncodeAndSendMessage((int) Action.VIT, 2, new byte[] { 15, 19 });
 
 
-            double Kp = 0;
-            double Ki = 0;
-            double Kd = 0;
+            float Kp = 10;
+            float Ki = 5;
+            float Kd = 2;
 
-            double maxP = 0;
-            double maxI = 0;
-            double maxD = 0;
+            float maxP = 1;
+            float maxI = 2;
+            float maxD = 3;
 
             List<byte> CorrSend = new List<byte>();
+
 
             CorrSend.Add((byte) Corr.lineaire);
             CorrSend.AddRange(BitConverter.GetBytes(Kp));
@@ -479,9 +488,12 @@ namespace RobotInterface
                     TextBoxReception.Text += "GAUCHE: " + g.ToString("N2") +
                         " | DROITE: " + d.ToString("N2") + "\r\n";
                     */
+                    break;
 
+                case Action.PID:
 
                     break;
+
 
             }
 

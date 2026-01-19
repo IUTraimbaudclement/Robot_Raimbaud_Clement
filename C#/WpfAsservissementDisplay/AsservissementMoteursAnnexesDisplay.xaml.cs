@@ -1,13 +1,12 @@
-﻿using Constants;
-using System;
+﻿using System;
 using System.Linq;
 using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
-using Utilities;
+using Timer = System.Timers.Timer;
 
-namespace WpfAsservissementDisplay
+namespace WpfAsservissementDisplay_NS
 {
     public partial class AsservissementMoteursAnnexesDisplay : UserControl
     {
@@ -57,48 +56,48 @@ namespace WpfAsservissementDisplay
 
         System.Timers.Timer displayTimer;
 
-        AsservissementMode asservModeM5 = AsservissementMode.DisabledM5;
-        AsservissementMode asservModeM6 = AsservissementMode.DisabledM6;
-        AsservissementMode asservModeM7 = AsservissementMode.DisabledM7;
-        AsservissementMode asservModeM8 = AsservissementMode.DisabledM8;
+        //AsservissementMode asservModeM5 = AsservissementMode.DisabledM5;
+        //AsservissementMode asservModeM6 = AsservissementMode.DisabledM6;
+        //AsservissementMode asservModeM7 = AsservissementMode.DisabledM7;
+        //AsservissementMode asservModeM8 = AsservissementMode.DisabledM8;
 
         public AsservissementMoteursAnnexesDisplay()
         {
             InitializeComponent();
-            commandM5List = new Utilities.FixedSizedQueue<double>(queueSize);
-            commandM6List = new Utilities.FixedSizedQueue<double>(queueSize);
-            commandM7List = new Utilities.FixedSizedQueue<double>(queueSize);
-            commandM8List = new Utilities.FixedSizedQueue<double>(queueSize);
+            commandM5List = new FixedSizedQueue<double>(queueSize);
+            commandM6List = new FixedSizedQueue<double>(queueSize);
+            commandM7List = new FixedSizedQueue<double>(queueSize);
+            commandM8List = new FixedSizedQueue<double>(queueSize);
 
-            consigneM5List = new Utilities.FixedSizedQueue<double>(queueSize);
-            consigneM6List = new Utilities.FixedSizedQueue<double>(queueSize);
-            consigneM7List = new Utilities.FixedSizedQueue<double>(queueSize);
-            consigneM8List = new Utilities.FixedSizedQueue<double>(queueSize);
+            consigneM5List = new FixedSizedQueue<double>(queueSize);
+            consigneM6List = new FixedSizedQueue<double>(queueSize);
+            consigneM7List = new FixedSizedQueue<double>(queueSize);
+            consigneM8List = new FixedSizedQueue<double>(queueSize);
 
-            measuredM5List = new Utilities.FixedSizedQueue<double>(queueSize);
-            measuredM6List = new Utilities.FixedSizedQueue<double>(queueSize);
-            measuredM7List = new Utilities.FixedSizedQueue<double>(queueSize);
-            measuredM8List = new Utilities.FixedSizedQueue<double>(queueSize);
+            measuredM5List = new FixedSizedQueue<double>(queueSize);
+            measuredM6List = new FixedSizedQueue<double>(queueSize);
+            measuredM7List = new FixedSizedQueue<double>(queueSize);
+            measuredM8List = new FixedSizedQueue<double>(queueSize);
 
-            errorM5List = new Utilities.FixedSizedQueue<double>(queueSize);
-            errorM6List = new Utilities.FixedSizedQueue<double>(queueSize);
-            errorM7List = new Utilities.FixedSizedQueue<double>(queueSize);
-            errorM8List = new Utilities.FixedSizedQueue<double>(queueSize);
+            errorM5List = new FixedSizedQueue<double>(queueSize);
+            errorM6List = new FixedSizedQueue<double>(queueSize);
+            errorM7List = new FixedSizedQueue<double>(queueSize);
+            errorM8List = new FixedSizedQueue<double>(queueSize);
 
-            corrPM5List = new Utilities.FixedSizedQueue<double>(queueSize);
-            corrPM6List = new Utilities.FixedSizedQueue<double>(queueSize);
-            corrPM7List = new Utilities.FixedSizedQueue<double>(queueSize);
-            corrPM8List = new Utilities.FixedSizedQueue<double>(queueSize);
+            corrPM5List = new FixedSizedQueue<double>(queueSize);
+            corrPM6List = new FixedSizedQueue<double>(queueSize);
+            corrPM7List = new FixedSizedQueue<double>(queueSize);
+            corrPM8List = new FixedSizedQueue<double>(queueSize);
 
-            corrIM5List = new Utilities.FixedSizedQueue<double>(queueSize);
-            corrIM6List = new Utilities.FixedSizedQueue<double>(queueSize);
-            corrIM7List = new Utilities.FixedSizedQueue<double>(queueSize);
-            corrIM8List = new Utilities.FixedSizedQueue<double>(queueSize);
+            corrIM5List = new FixedSizedQueue<double>(queueSize);
+            corrIM6List = new FixedSizedQueue<double>(queueSize);
+            corrIM7List = new FixedSizedQueue<double>(queueSize);
+            corrIM8List = new FixedSizedQueue<double>(queueSize);
 
-            corrDM5List = new Utilities.FixedSizedQueue<double>(queueSize);
-            corrDM6List = new Utilities.FixedSizedQueue<double>(queueSize);
-            corrDM7List = new Utilities.FixedSizedQueue<double>(queueSize);
-            corrDM8List = new Utilities.FixedSizedQueue<double>(queueSize);
+            corrDM5List = new FixedSizedQueue<double>(queueSize);
+            corrDM6List = new FixedSizedQueue<double>(queueSize);
+            corrDM7List = new FixedSizedQueue<double>(queueSize);
+            corrDM8List = new FixedSizedQueue<double>(queueSize);
 
             consigneM5List.Enqueue(0);
             consigneM6List.Enqueue(0);
@@ -125,103 +124,103 @@ namespace WpfAsservissementDisplay
             displayTimer.Start();
         }
 
-        public void SetMotor5AsservissementMode(AsservissementMode mode)
-        {
-            asservModeM5 = mode;
-            switch (asservModeM5)
-            {
-                case AsservissementMode.DisabledM5:
-                    LabelConsigneM5.Visibility = Visibility.Hidden;
-                    LabelErreurM5.Visibility = Visibility.Hidden;
-                    LabelCommandM5.Visibility = Visibility.Hidden;
-                    LabelCorrPM5.Visibility = Visibility.Hidden;
-                    LabelCorrIM5.Visibility = Visibility.Hidden;
-                    LabelCorrDM5.Visibility = Visibility.Hidden;
-                    break;
-                case AsservissementMode.EnabledM5:
-                    LabelConsigneM5.Visibility = Visibility.Visible;
-                    LabelErreurM5.Visibility = Visibility.Visible;
-                    LabelCommandM5.Visibility = Visibility.Visible;
-                    LabelCorrPM5.Visibility = Visibility.Visible;
-                    LabelCorrIM5.Visibility = Visibility.Visible;
-                    LabelCorrDM5.Visibility = Visibility.Visible;
-                    break;
-            }
-        }
+        //public void SetMotor5AsservissementMode(AsservissementMode mode)
+        //{
+        //    asservModeM5 = mode;
+        //    switch (asservModeM5)
+        //    {
+        //        case AsservissementMode.DisabledM5:
+        //            LabelConsigneM5.Visibility = Visibility.Hidden;
+        //            LabelErreurM5.Visibility = Visibility.Hidden;
+        //            LabelCommandM5.Visibility = Visibility.Hidden;
+        //            LabelCorrPM5.Visibility = Visibility.Hidden;
+        //            LabelCorrIM5.Visibility = Visibility.Hidden;
+        //            LabelCorrDM5.Visibility = Visibility.Hidden;
+        //            break;
+        //        case AsservissementMode.EnabledM5:
+        //            LabelConsigneM5.Visibility = Visibility.Visible;
+        //            LabelErreurM5.Visibility = Visibility.Visible;
+        //            LabelCommandM5.Visibility = Visibility.Visible;
+        //            LabelCorrPM5.Visibility = Visibility.Visible;
+        //            LabelCorrIM5.Visibility = Visibility.Visible;
+        //            LabelCorrDM5.Visibility = Visibility.Visible;
+        //            break;
+        //    }
+        //}
     
-        public void SetMotor6AsservissementMode(AsservissementMode mode)
-        {
-            asservModeM6 = mode;
+        //public void SetMotor6AsservissementMode(AsservissementMode mode)
+        //{
+        //    asservModeM6 = mode;
 
-            switch (asservModeM6)
-            {
-                case AsservissementMode.DisabledM6:
-                    LabelConsigneM6.Visibility = Visibility.Hidden;
-                    LabelErreurM6.Visibility = Visibility.Hidden;
-                    LabelCommandM6.Visibility = Visibility.Hidden;
-                    LabelCorrPM6.Visibility = Visibility.Hidden;
-                    LabelCorrIM6.Visibility = Visibility.Hidden;
-                    LabelCorrDM6.Visibility = Visibility.Hidden;
-                    break;
-                case AsservissementMode.EnabledM6:
-                    LabelConsigneM6.Visibility = Visibility.Visible;
-                    LabelErreurM6.Visibility = Visibility.Visible;
-                    LabelCommandM6.Visibility = Visibility.Visible;
-                    LabelCorrPM6.Visibility = Visibility.Visible;
-                    LabelCorrIM6.Visibility = Visibility.Visible;
-                    LabelCorrDM6.Visibility = Visibility.Visible;
-                    break;
-            }
-        }
+        //    switch (asservModeM6)
+        //    {
+        //        case AsservissementMode.DisabledM6:
+        //            LabelConsigneM6.Visibility = Visibility.Hidden;
+        //            LabelErreurM6.Visibility = Visibility.Hidden;
+        //            LabelCommandM6.Visibility = Visibility.Hidden;
+        //            LabelCorrPM6.Visibility = Visibility.Hidden;
+        //            LabelCorrIM6.Visibility = Visibility.Hidden;
+        //            LabelCorrDM6.Visibility = Visibility.Hidden;
+        //            break;
+        //        case AsservissementMode.EnabledM6:
+        //            LabelConsigneM6.Visibility = Visibility.Visible;
+        //            LabelErreurM6.Visibility = Visibility.Visible;
+        //            LabelCommandM6.Visibility = Visibility.Visible;
+        //            LabelCorrPM6.Visibility = Visibility.Visible;
+        //            LabelCorrIM6.Visibility = Visibility.Visible;
+        //            LabelCorrDM6.Visibility = Visibility.Visible;
+        //            break;
+        //    }
+        //}
 
-        public void SetMotor7AsservissementMode(AsservissementMode mode)
-        {
-            asservModeM7 = mode;
+        //public void SetMotor7AsservissementMode(AsservissementMode mode)
+        //{
+        //    asservModeM7 = mode;
 
-            switch (asservModeM7)
-            {
-                case AsservissementMode.DisabledM7:
-                    LabelConsigneM7.Visibility = Visibility.Hidden;
-                    LabelErreurM7.Visibility = Visibility.Hidden;
-                    LabelCommandM7.Visibility = Visibility.Hidden;
-                    LabelCorrPM7.Visibility = Visibility.Hidden;
-                    LabelCorrIM7.Visibility = Visibility.Hidden;
-                    LabelCorrDM7.Visibility = Visibility.Hidden;
-                    break;
-                case AsservissementMode.EnabledM7:
-                    LabelConsigneM7.Visibility = Visibility.Visible;
-                    LabelErreurM7.Visibility = Visibility.Visible;
-                    LabelCommandM7.Visibility = Visibility.Visible;
-                    LabelCorrPM7.Visibility = Visibility.Visible;
-                    LabelCorrIM7.Visibility = Visibility.Visible;
-                    LabelCorrDM7.Visibility = Visibility.Visible;
-                    break;
-            }
-        }
-        public void SetMotor8AsservissementMode(AsservissementMode mode)
-        {
-            asservModeM8 = mode;
+        //    switch (asservModeM7)
+        //    {
+        //        case AsservissementMode.DisabledM7:
+        //            LabelConsigneM7.Visibility = Visibility.Hidden;
+        //            LabelErreurM7.Visibility = Visibility.Hidden;
+        //            LabelCommandM7.Visibility = Visibility.Hidden;
+        //            LabelCorrPM7.Visibility = Visibility.Hidden;
+        //            LabelCorrIM7.Visibility = Visibility.Hidden;
+        //            LabelCorrDM7.Visibility = Visibility.Hidden;
+        //            break;
+        //        case AsservissementMode.EnabledM7:
+        //            LabelConsigneM7.Visibility = Visibility.Visible;
+        //            LabelErreurM7.Visibility = Visibility.Visible;
+        //            LabelCommandM7.Visibility = Visibility.Visible;
+        //            LabelCorrPM7.Visibility = Visibility.Visible;
+        //            LabelCorrIM7.Visibility = Visibility.Visible;
+        //            LabelCorrDM7.Visibility = Visibility.Visible;
+        //            break;
+        //    }
+        //}
+        //public void SetMotor8AsservissementMode(AsservissementMode mode)
+        //{
+        //    asservModeM8 = mode;
 
-            switch (asservModeM8)
-            {
-                case AsservissementMode.DisabledM8:
-                    LabelConsigneM8.Visibility = Visibility.Hidden;
-                    LabelErreurM8.Visibility = Visibility.Hidden;
-                    LabelCommandM8.Visibility = Visibility.Hidden;
-                    LabelCorrPM8.Visibility = Visibility.Hidden;
-                    LabelCorrIM8.Visibility = Visibility.Hidden;
-                    LabelCorrDM8.Visibility = Visibility.Hidden;
-                    break;
-                case AsservissementMode.EnabledM8:
-                    LabelConsigneM8.Visibility = Visibility.Visible;
-                    LabelErreurM8.Visibility = Visibility.Visible;
-                    LabelCommandM8.Visibility = Visibility.Visible;
-                    LabelCorrPM8.Visibility = Visibility.Visible;
-                    LabelCorrIM8.Visibility = Visibility.Visible;
-                    LabelCorrDM8.Visibility = Visibility.Visible;
-                    break;
-            }
-        }
+        //    switch (asservModeM8)
+        //    {
+        //        case AsservissementMode.DisabledM8:
+        //            LabelConsigneM8.Visibility = Visibility.Hidden;
+        //            LabelErreurM8.Visibility = Visibility.Hidden;
+        //            LabelCommandM8.Visibility = Visibility.Hidden;
+        //            LabelCorrPM8.Visibility = Visibility.Hidden;
+        //            LabelCorrIM8.Visibility = Visibility.Hidden;
+        //            LabelCorrDM8.Visibility = Visibility.Hidden;
+        //            break;
+        //        case AsservissementMode.EnabledM8:
+        //            LabelConsigneM8.Visibility = Visibility.Visible;
+        //            LabelErreurM8.Visibility = Visibility.Visible;
+        //            LabelCommandM8.Visibility = Visibility.Visible;
+        //            LabelCorrPM8.Visibility = Visibility.Visible;
+        //            LabelCorrIM8.Visibility = Visibility.Visible;
+        //            LabelCorrDM8.Visibility = Visibility.Visible;
+        //            break;
+        //    }
+        //}
 
         public void SetTitle(string titre)
         {

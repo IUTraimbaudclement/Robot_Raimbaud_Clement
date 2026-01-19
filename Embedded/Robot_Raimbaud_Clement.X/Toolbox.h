@@ -11,6 +11,7 @@ float LimitToInterval(float, float, float);
 float RadianToDegree(float);
 float DegreeToRadian(float);
 void getBytesFromFloat(unsigned char*, int, float);
+float getFloatFromBytes(const unsigned char *p, int index);
 void getBytesFromInt32(unsigned char*, int, long);
 void getBytesFromDouble(unsigned char*, int, double);
 

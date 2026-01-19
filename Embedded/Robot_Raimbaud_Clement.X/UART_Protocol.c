@@ -6,6 +6,7 @@
 #include "main.h"
 #include "Robot.h"
 #include "asservissement.h"
+#include "Toolbox.h"
 
 #define WAITING 0
 #define FUNCTION_MSB 1
@@ -131,6 +132,8 @@ void UartProcessDecodedMessage(int function, int payloadLength, unsigned char* p
     //correspondant au message recu
     //...
     
+    
+
     switch (function)
     {
         case SET_ROBOT_STATE:
@@ -148,14 +151,13 @@ void UartProcessDecodedMessage(int function, int payloadLength, unsigned char* p
 }
     
 void sendPIDcorrection(unsigned char* payload)
-{
-        
-    double Kp = (double) ((payload[1] << 24) + (payload[2] << 16) + (payload[3] << 8) + payload[4]);
-    double Ki = (double) (payload[5] << 24 + payload[6] << 16 + payload[7] << 8 + payload[8]);
-    double Kd = (double) (payload[9] << 24 + payload[10] << 16 + payload[11] << 8 + payload[12]);
-    double maxP = (double) (payload[13] << 24 + payload[14] << 16 + payload[15] << 8 + payload[16]);
-    double maxI = (double) (payload[17] << 24 + payload[18] << 16 + payload[19] << 8 + payload[20]);
-    double maxD = (double) (payload[21] << 24 + payload[22] << 16 + payload[23] << 8 + payload[24]);
+{   
+    float Kp = getFloatFromBytes(payload, 1);
+    float Ki = getFloatFromBytes(payload, 5);
+    float Kd = getFloatFromBytes(payload, 9);
+    float maxP = getFloatFromBytes(payload, 13);
+    float maxI = getFloatFromBytes(payload, 17);
+    float maxD = getFloatFromBytes(payload, 21);
 
     if(payload[0] == 1) // Linéaire 
         SetupPidAsservissement(PidX, Kp, Ki, Kd, maxP, maxI, maxD);

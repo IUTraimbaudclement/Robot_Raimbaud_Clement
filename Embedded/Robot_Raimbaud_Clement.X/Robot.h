@@ -1,6 +1,7 @@
 #ifndef ROBOT_H
 #define ROBOT_H
 
+#include "Asservissement.h"
 
 typedef struct robotStateBITS {
     union {
@@ -32,5 +33,7 @@ typedef struct robotStateBITS {
 
 extern volatile ROBOT_STATE_BITS robotState;
 
+extern volatile PidCorrector* PidX;
+extern volatile PidCorrector* PidTheta;
 
 #endif /* ROBOT_H */
