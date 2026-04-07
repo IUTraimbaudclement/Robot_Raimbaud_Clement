@@ -178,15 +178,14 @@ namespace RobotInterface
 
 
             float Kp = 10;
-            float Ki = 5;
-            float Kd = 2;
+            float Ki = 20;
+            float Kd = 30;
 
             float maxP = 1;
             float maxI = 2;
             float maxD = 3;
 
             List<byte> CorrSend = new List<byte>();
-
 
             CorrSend.Add((byte) Corr.lineaire);
             CorrSend.AddRange(BitConverter.GetBytes(Kp));
@@ -492,6 +491,18 @@ namespace RobotInterface
 
                 case Action.PID:
 
+                    float getKp = BitConverter.ToSingle(msgPayload, 1);
+                    float getKi = BitConverter.ToSingle(msgPayload, 5);
+                    float getKd = BitConverter.ToSingle(msgPayload, 9);
+                    float getMaxP = BitConverter.ToSingle(msgPayload, 13);
+                    float getMaxI = BitConverter.ToSingle(msgPayload, 17);
+                    float getMaxD = BitConverter.ToSingle(msgPayload, 21);
+
+
+                    asservSpeedDisplay.Update
+
+                    asservSpeedDisplay.UpdatePolarSpeedCorrectionGains(getKp, 0, getKi, 0, getKd, 0);
+                    asservSpeedDisplay.UpdatePolarSpeedCorrectionLimits(getMaxP, 0, getMaxI, 0, getMaxD, 0);
                     break;
 
 

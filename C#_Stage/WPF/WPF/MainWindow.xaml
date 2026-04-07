@@ -1,0 +1,33 @@
+﻿<Window x:Class="WPF.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPF"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="5*"/>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="200"/>
+        </Grid.RowDefinitions>
+        <GroupBox x:Name="Emission" Header="GroupBox" Grid.Row="0" Grid.Column="0" Margin="5">
+            <TextBox x:Name="TextBoxEmission" TextWrapping="Wrap" Text="" TextChanged="TextBoxEmission_TextChanged" AcceptsReturn="True" KeyUp="TextBoxEmission_KeyUp"/>
+        </GroupBox>
+        <GroupBox x:Name="Reception" Header="GroupBox" Grid.Row="0" Grid.Column="1" Margin="5">
+            <TextBox x:Name="TextBoxReception" TextWrapping="Wrap" Text="" AcceptsReturn="True" IsReadOnly="True"/>
+        </GroupBox>
+
+        <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.ColumnSpan="2" HorizontalAlignment="Center">
+            <Button x:Name="ButtonHaut" Content="Haut" Width="100" Click="ButtonHaut_Click" Margin="5"/>
+            <Button x:Name="ButtonStop"  Content="Stop" Width="100" Click="ButtonStop_Click" Margin="5" />
+            <Button x:Name="ButtonBas" Content="Bas" Width="100" Click="ButtonBas_Click" Margin="5"/>
+        </StackPanel>
+
+    </Grid>
+</Window>

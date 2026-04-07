@@ -2,5 +2,5 @@
 #include "Asservissement.h"
 
 volatile ROBOT_STATE_BITS robotState;
-volatile PidCorrector* PidX;
-volatile PidCorrector* PidTheta;
+volatile PidCorrector PidX;
+volatile PidCorrector PidTheta;

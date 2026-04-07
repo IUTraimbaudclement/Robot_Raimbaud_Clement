@@ -33,7 +33,7 @@ typedef struct robotStateBITS {
 
 extern volatile ROBOT_STATE_BITS robotState;
 
-extern volatile PidCorrector* PidX;
-extern volatile PidCorrector* PidTheta;
+extern volatile PidCorrector PidX;
+extern volatile PidCorrector PidTheta;
 
 #endif /* ROBOT_H */

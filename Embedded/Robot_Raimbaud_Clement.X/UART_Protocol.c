@@ -159,11 +159,32 @@ void sendPIDcorrection(unsigned char* payload)
     float maxI = getFloatFromBytes(payload, 17);
     float maxD = getFloatFromBytes(payload, 21);
 
+    unsigned char sendCorrPayload[25];
+    
+    PidCorrector CorrPid;
+    
     if(payload[0] == 1) // Linéaire 
-        SetupPidAsservissement(PidX, Kp, Ki, Kd, maxP, maxI, maxD);
+    {
+        SetupPidAsservissement(&PidX, Kp, Ki, Kd, maxP, maxI, maxD);
+        
+        sendCorrPayload[0] = 1; 
+        CorrPid = PidX;     
+    }
     else if(payload[0] == 2) // Angulaire 
-        SetupPidAsservissement(PidTheta, Kp, Ki, Kd, maxP, maxI, maxD);  
+    {
+        SetupPidAsservissement(&PidTheta, Kp, Ki, Kd, maxP, maxI, maxD);  
+
+        sendCorrPayload[0] = 2; 
+        CorrPid = PidTheta;
+    }
      
+    getBytesFromFloat(sendCorrPayload, 1, CorrPid.Kp);
+    getBytesFromFloat(sendCorrPayload, 5, CorrPid.Ki);
+    getBytesFromFloat(sendCorrPayload, 9, CorrPid.Kd);
+    getBytesFromFloat(sendCorrPayload, 13, CorrPid.erreurProportionelleMax);
+    getBytesFromFloat(sendCorrPayload, 17, CorrPid.erreurIntegraleMax);
+    getBytesFromFloat(sendCorrPayload, 21, CorrPid.erreurDeriveeMax); 
+    UartEncodeAndSendMessage(CORRECTEUR_PID, 25, sendCorrPayload);
 }
 
 void SetRobotAutoControlState(unsigned char c)
