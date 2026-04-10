@@ -6,8 +6,11 @@
 #include "main.h"
 #include "ChipConfig.h"
 #include "QEI.h"
+#include "Robot.h"
 
 #define T1freq 250
+#define PID_CORRECTION 0x0070
+#define CONSIGNE 0x0071
 
 unsigned long timestamp;
 
@@ -150,7 +153,30 @@ void __attribute__((interrupt, no_auto_psv)) _T4Interrupt(void)
     LED_BLEUE_2 = !LED_BLEUE_2;
     
     timestamp++;
+    
+    unsigned char PidPayload[48];
+    
+    getBytesFromFloat(PidPayload, 0, PidX.Kp);
+    getBytesFromFloat(PidPayload, 4, PidX.Ki);
+    getBytesFromFloat(PidPayload, 8, PidX.Kd);
+    getBytesFromFloat(PidPayload, 12, PidX.erreurProportionelleMax);
+    getBytesFromFloat(PidPayload, 16, PidX.erreurIntegraleMax);
+    getBytesFromFloat(PidPayload, 20, PidX.erreurDeriveeMax); 
+    
+    getBytesFromFloat(PidPayload, 24, PidTheta.Kp);
+    getBytesFromFloat(PidPayload, 28, PidTheta.Ki);
+    getBytesFromFloat(PidPayload, 32, PidTheta.Kd);
+    getBytesFromFloat(PidPayload, 36, PidTheta.erreurProportionelleMax);
+    getBytesFromFloat(PidPayload, 40, PidTheta.erreurIntegraleMax);
+    getBytesFromFloat(PidPayload, 44, PidTheta.erreurDeriveeMax); 
+    
+    UartEncodeAndSendMessage(PID_CORRECTION, 48, PidPayload);
 
+    unsigned char ConsignePayload[8];
+    getBytesFromFloat(ConsignePayload, 0, robotState.vitesseGaucheConsigne);
+    getBytesFromFloat(ConsignePayload, 4, robotState.vitesseDroiteConsigne);
+    UartEncodeAndSendMessage(CONSIGNE, 8, ConsignePayload);
+   
 }
 
 //Interruption du timer 32 bits sur 2-3

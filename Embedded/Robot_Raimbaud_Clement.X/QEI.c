@@ -5,8 +5,6 @@
 #include "timer.h"
 #include "UART_Protocol.h"
 
-#define DISTROUES 0.219
-#define FREQ_ECH_QEI 250
 #define POSITION_DATA 0x0061
 
 void InitQEI1()

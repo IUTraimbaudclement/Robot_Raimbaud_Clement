@@ -81,7 +81,8 @@ int main (void){
         //UartEncodeAndSendMessage(0x0080, 7, payload);
         //__delay32(40000000);
         
-        int i;        for(i=0; i< CB_RX1_GetDataSize(); i++)
+        int i;        
+        for(i=0; i< CB_RX1_GetDataSize(); i++)
         {
             unsigned char c = CB_RX1_Get();
             UartDecodeMessage(c);

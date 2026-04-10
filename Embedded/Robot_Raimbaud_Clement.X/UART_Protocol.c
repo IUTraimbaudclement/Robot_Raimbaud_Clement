@@ -19,6 +19,7 @@
 #define SET_ROBOT_STATE 0x0051
 #define SET_ROBOT_MANUAL_CONTROL 0x0052
 #define CORRECTEUR_PID 0x0070
+#define CONSIGNE 0x0071
 
 unsigned char UartCalculateChecksum(int msgFunction, int msgPayloadLength, unsigned char* msgPayload)
 {
@@ -145,6 +146,9 @@ void UartProcessDecodedMessage(int function, int payloadLength, unsigned char* p
         case CORRECTEUR_PID:
             sendPIDcorrection(payload);
             break;
+        case CONSIGNE:
+            sendConsigne(payload);
+            break;
         default:
             break;
     }
@@ -159,32 +163,20 @@ void sendPIDcorrection(unsigned char* payload)
     float maxI = getFloatFromBytes(payload, 17);
     float maxD = getFloatFromBytes(payload, 21);
 
-    unsigned char sendCorrPayload[25];
-    
-    PidCorrector CorrPid;
-    
     if(payload[0] == 1) // Linéaire 
-    {
-        SetupPidAsservissement(&PidX, Kp, Ki, Kd, maxP, maxI, maxD);
-        
-        sendCorrPayload[0] = 1; 
-        CorrPid = PidX;     
-    }
+        SetupPidAsservissement(&PidX, Kp, Ki, Kd, maxP, maxI, maxD);    
     else if(payload[0] == 2) // Angulaire 
-    {
         SetupPidAsservissement(&PidTheta, Kp, Ki, Kd, maxP, maxI, maxD);  
-
-        sendCorrPayload[0] = 2; 
-        CorrPid = PidTheta;
-    }
      
-    getBytesFromFloat(sendCorrPayload, 1, CorrPid.Kp);
-    getBytesFromFloat(sendCorrPayload, 5, CorrPid.Ki);
-    getBytesFromFloat(sendCorrPayload, 9, CorrPid.Kd);
-    getBytesFromFloat(sendCorrPayload, 13, CorrPid.erreurProportionelleMax);
-    getBytesFromFloat(sendCorrPayload, 17, CorrPid.erreurIntegraleMax);
-    getBytesFromFloat(sendCorrPayload, 21, CorrPid.erreurDeriveeMax); 
-    UartEncodeAndSendMessage(CORRECTEUR_PID, 25, sendCorrPayload);
+}
+
+void sendConsigne(unsigned char* payload)
+{   
+    float vitGauche = getFloatFromBytes(payload, 0);
+    float vitDroite = getFloatFromBytes(payload, 4);
+
+    robotState.vitesseGaucheConsigne = vitGauche;
+    robotState.vitesseDroiteConsigne = vitDroite;  
 }
 
 void SetRobotAutoControlState(unsigned char c)

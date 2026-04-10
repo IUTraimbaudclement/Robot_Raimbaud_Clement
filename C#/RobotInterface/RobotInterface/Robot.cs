@@ -15,6 +15,7 @@ namespace RobotInterface
         public float positionXOdo;
         public float positionYOdo;
         public double angle;
+        public double mode = 0;
 
         public Queue<byte> byteListReceived;
         public Robot()

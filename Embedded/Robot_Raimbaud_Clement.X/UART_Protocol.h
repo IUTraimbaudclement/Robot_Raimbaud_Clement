@@ -8,6 +8,7 @@ void UartDecodeMessage(unsigned char);
 void SetRobotAutoControlState(unsigned char );
 void SetRobotState(unsigned char);
 void sendPIDcorrection(unsigned char*);
+void sendConsigne(unsigned char* payload);
 
 #endif	/* UART_PROTOCOL_H */
 

@@ -150,6 +150,21 @@ namespace RobotInterface
             TextBoxReception.Clear(); // Supprime tout le contenu de la boite
         }
 
+        private void ButtonMode_Click(object sender, RoutedEventArgs e)
+        {
+            if(robot.mode == 0)
+            {
+                UartEncodeAndSendMessage((int)Action.MODE, 1, new byte[] { 1 });
+                robot.mode = 1;
+            }
+            else
+            {
+                UartEncodeAndSendMessage((int)Action.MODE, 1, new byte[] { 0 });
+                robot.mode = 0;
+            }
+
+        }
+
         private void ButtonTest_Click(object sender, RoutedEventArgs e)
         {
             /*
@@ -196,6 +211,56 @@ namespace RobotInterface
             CorrSend.AddRange(BitConverter.GetBytes(maxD));
 
             UartEncodeAndSendMessage((int) Action.PID, CorrSend.Count(), CorrSend.ToArray());
+
+        }
+
+        private void PID_Click(object sender, RoutedEventArgs e)
+        {
+            float sendKp = 0;
+            float sendKi = 0;
+            float sendKd = 0;
+            float sendMaxKp = 0;
+            float sendMaxKi = 0;
+            float sendMaxKd = 0;
+
+            float.TryParse(TextBoxKp.Text.Split(":")[1], out sendKp);
+            float.TryParse(TextBoxKi.Text.Split(":")[1], out sendKi);
+            float.TryParse(TextBoxKd.Text.Split(":")[1], out sendKd);
+
+            float.TryParse(TextBoxMaxKp.Text.Split(":")[1], out sendMaxKp);
+            float.TryParse(TextBoxMaxKi.Text.Split(":")[1], out sendMaxKi);
+            float.TryParse(TextBoxMaxKd.Text.Split(":")[1], out sendMaxKd);
+
+            List<byte> CorrSend = new List<byte>();
+
+            if (sender.Equals(ButtonPIDx))
+                CorrSend.Add((byte)Corr.lineaire);
+            else if (sender.Equals(ButtonPIDthéta))
+                CorrSend.Add((byte)Corr.angulaire);
+            CorrSend.AddRange(BitConverter.GetBytes(sendKp));
+            CorrSend.AddRange(BitConverter.GetBytes(sendKi));
+            CorrSend.AddRange(BitConverter.GetBytes(sendKd));
+            CorrSend.AddRange(BitConverter.GetBytes(sendMaxKp));
+            CorrSend.AddRange(BitConverter.GetBytes(sendMaxKi));
+            CorrSend.AddRange(BitConverter.GetBytes(sendMaxKd));
+
+            UartEncodeAndSendMessage((int)Action.PID, CorrSend.Count(), CorrSend.ToArray());
+        }
+
+        private void Consigne_Click(object sender, RoutedEventArgs e)
+        {
+            float sendVitGauche = 0;
+            float sendVitDroite = 0;
+
+            float.TryParse(TextBoxVitGauche.Text.Split(":")[1], out sendVitGauche);
+            float.TryParse(TextBoxVitDroite.Text.Split(":")[1], out sendVitDroite);
+
+            List<byte> ConsSend = new List<byte>();
+
+            ConsSend.AddRange(BitConverter.GetBytes(sendVitGauche));
+            ConsSend.AddRange(BitConverter.GetBytes(sendVitDroite));
+
+            UartEncodeAndSendMessage((int)Action.CONSIGNE, ConsSend.Count(), ConsSend.ToArray());
 
         }
 
@@ -325,7 +390,8 @@ namespace RobotInterface
             STATE = 0x0050,
             MODE = 0x0052,
             POSITION = 0x0061,
-            PID = 0x0070
+            PID = 0x0070,
+            CONSIGNE = 0x0071,
         }
 
         public enum Corr
@@ -471,6 +537,8 @@ namespace RobotInterface
                     robot.positionXOdo = BitConverter.ToSingle(msgPayload, 4);
                     robot.positionYOdo = BitConverter.ToSingle(msgPayload, 8);
                     float angleRad = BitConverter.ToSingle(msgPayload, 12);
+                    float vitLin = BitConverter.ToSingle(msgPayload, 16);
+                    float vitAng = BitConverter.ToSingle(msgPayload, 20);
 
                     robot.angle = (360 / (2 * Math.PI)) * angleRad;
 
@@ -479,6 +547,7 @@ namespace RobotInterface
                         " | ANGLE: " + robot.angle.ToString("N2") +
                         " | TEMPS: " + instantPosition.ToString() + " ms" + "\r\n";
 
+                    asservSpeedDisplay.UpdatePolarOdometrySpeed(vitLin, vitAng);
 
                     /*
                     float g = BitConverter.ToSingle(msgPayload, 16);
@@ -491,21 +560,31 @@ namespace RobotInterface
 
                 case Action.PID:
 
-                    float getKp = BitConverter.ToSingle(msgPayload, 1);
-                    float getKi = BitConverter.ToSingle(msgPayload, 5);
-                    float getKd = BitConverter.ToSingle(msgPayload, 9);
-                    float getMaxP = BitConverter.ToSingle(msgPayload, 13);
-                    float getMaxI = BitConverter.ToSingle(msgPayload, 17);
-                    float getMaxD = BitConverter.ToSingle(msgPayload, 21);
+                    float getXKp = BitConverter.ToSingle(msgPayload, 0);
+                    float getXKi = BitConverter.ToSingle(msgPayload, 4);
+                    float getXKd = BitConverter.ToSingle(msgPayload, 8);
+                    float getXMaxP = BitConverter.ToSingle(msgPayload, 12);
+                    float getXMaxI = BitConverter.ToSingle(msgPayload, 16);
+                    float getXMaxD = BitConverter.ToSingle(msgPayload, 20);
 
+                    float getThétaKp = BitConverter.ToSingle(msgPayload, 24);
+                    float getThétaKi = BitConverter.ToSingle(msgPayload, 28);
+                    float getThétaKd = BitConverter.ToSingle(msgPayload, 32);
+                    float getThétaMaxP = BitConverter.ToSingle(msgPayload, 36);
+                    float getThétaMaxI = BitConverter.ToSingle(msgPayload, 40);
+                    float getThétaMaxD = BitConverter.ToSingle(msgPayload, 44);
 
-                    asservSpeedDisplay.Update
-
-                    asservSpeedDisplay.UpdatePolarSpeedCorrectionGains(getKp, 0, getKi, 0, getKd, 0);
-                    asservSpeedDisplay.UpdatePolarSpeedCorrectionLimits(getMaxP, 0, getMaxI, 0, getMaxD, 0);
+                    asservSpeedDisplay.UpdatePolarSpeedCorrectionGains(getXKp, getThétaKp, getXKi, getThétaKi, getXKd, getThétaKd);
+                    asservSpeedDisplay.UpdatePolarSpeedCorrectionLimits(getXMaxP, getThétaMaxP, getXMaxI, getThétaMaxI, getXMaxD, getThétaMaxD);
                     break;
 
+                case Action.CONSIGNE:
 
+                    float getVitGauche = BitConverter.ToSingle(msgPayload, 0);
+                    float getVitDroite = BitConverter.ToSingle(msgPayload, 4);
+
+                    asservSpeedDisplay.UpdateIndependantSpeedConsigneValues(getVitGauche, getVitDroite);
+                    break;
             }
 
 
