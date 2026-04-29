@@ -7,6 +7,7 @@
 #include "ChipConfig.h"
 #include "QEI.h"
 #include "Robot.h"
+#include "Toolbox.h"
 
 #define T1freq 250
 #define PID_CORRECTION 0x0070
@@ -130,11 +131,10 @@ void __attribute__((interrupt, no_auto_psv)) _T1Interrupt(void)
     IFS0bits.T1IF = 0;
     LED_BLANCHE_2 = !LED_BLANCHE_2;
     
-    PWMUpdateSpeed();
-    
     ADC1StartConversionSequence();
     OperatingSystemLoop(); 
     QEIUpdateData();
+    UpdateAsservissement();
     
     if(t1add++ % 250 == 0)
         SendPositionData();
@@ -156,19 +156,19 @@ void __attribute__((interrupt, no_auto_psv)) _T4Interrupt(void)
     
     unsigned char PidPayload[48];
     
-    getBytesFromFloat(PidPayload, 0, PidX.Kp);
-    getBytesFromFloat(PidPayload, 4, PidX.Ki);
-    getBytesFromFloat(PidPayload, 8, PidX.Kd);
-    getBytesFromFloat(PidPayload, 12, PidX.erreurProportionelleMax);
-    getBytesFromFloat(PidPayload, 16, PidX.erreurIntegraleMax);
-    getBytesFromFloat(PidPayload, 20, PidX.erreurDeriveeMax); 
+    getBytesFromFloat(PidPayload, 0, robotState.PidX.Kp);
+    getBytesFromFloat(PidPayload, 4, robotState.PidX.Ki);
+    getBytesFromFloat(PidPayload, 8, robotState.PidX.Kd);
+    getBytesFromFloat(PidPayload, 12, robotState.PidX.erreurProportionelleMax);
+    getBytesFromFloat(PidPayload, 16, robotState.PidX.erreurIntegraleMax);
+    getBytesFromFloat(PidPayload, 20, robotState.PidX.erreurDeriveeMax); 
     
-    getBytesFromFloat(PidPayload, 24, PidTheta.Kp);
-    getBytesFromFloat(PidPayload, 28, PidTheta.Ki);
-    getBytesFromFloat(PidPayload, 32, PidTheta.Kd);
-    getBytesFromFloat(PidPayload, 36, PidTheta.erreurProportionelleMax);
-    getBytesFromFloat(PidPayload, 40, PidTheta.erreurIntegraleMax);
-    getBytesFromFloat(PidPayload, 44, PidTheta.erreurDeriveeMax); 
+    getBytesFromFloat(PidPayload, 24, robotState.PidTheta.Kp);
+    getBytesFromFloat(PidPayload, 28, robotState.PidTheta.Ki);
+    getBytesFromFloat(PidPayload, 32, robotState.PidTheta.Kd);
+    getBytesFromFloat(PidPayload, 36, robotState.PidTheta.erreurProportionelleMax);
+    getBytesFromFloat(PidPayload, 40, robotState.PidTheta.erreurIntegraleMax);
+    getBytesFromFloat(PidPayload, 44, robotState.PidTheta.erreurDeriveeMax); 
     
     UartEncodeAndSendMessage(PID_CORRECTION, 48, PidPayload);
 

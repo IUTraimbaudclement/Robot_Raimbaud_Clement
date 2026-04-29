@@ -15,14 +15,26 @@ void SetupPidAsservissement(volatile PidCorrector* PidCorr, float Kp, float Ki, 
 double Correcteur(volatile PidCorrector* PidCorr, double erreur)
 {
     PidCorr->erreur = erreur;
-    double erreurProportionnelle = LimitToInterval(-PidCorr.erreurProportionelleMax, PidCorr.erreurProportionelleMax);
-    PidCorr->corrP = ...;
-    PidCorr->erreurIntegrale += ...;
-    PidCorr->erreurIntegrale = LimitToInterval(...);
-    PidCorr->corrI = ...;
+    double erreurProportionnelle = LimitToInterval(erreur, -PidCorr->erreurProportionelleMax, PidCorr->erreurProportionelleMax);
+    PidCorr->corrP = erreur * PidCorr->Kp;
+    PidCorr->erreurIntegrale += erreur / FREQ_ECH_QEI;
+    PidCorr->erreurIntegrale = LimitToInterval(PidCorr->erreurIntegrale, -PidCorr->erreurIntegraleMax, PidCorr->erreurIntegraleMax);
+    PidCorr->corrI = PidCorr->erreurIntegrale * PidCorr->Ki;
     double erreurDerivee = (erreur - PidCorr->epsilon_1)*FREQ_ECH_QEI;
     double deriveeBornee = LimitToInterval(erreurDerivee, -PidCorr->erreurDeriveeMax/PidCorr->Kd, PidCorr->erreurDeriveeMax/PidCorr->Kd);
     PidCorr->epsilon_1 = erreur;
     PidCorr->corrD = deriveeBornee * PidCorr->Kd;
     return PidCorr->corrP+PidCorr->corrI+PidCorr->corrD;
+}
+
+void UpdateAsservissement()
+{
+    robotState.PidX.erreur = ...;
+    robotState.PidTheta.erreur = ...;
+    
+    robotState.CorrectionVitesseLineaire = Correcteur(&robotState.PidX, robotState.PidX.erreur);
+    robotState.CorrectionVitesseAngulaire = Correcteur(&robotState.PidTheta, robotState.PidTheta.erreur);
+    
+    
+    PWMSetSpeedConsignePolaire(robotState.CorrectionVitesseLineaire, robotState.CorrectionVitesseAngulaire);
 }

@@ -164,9 +164,9 @@ void sendPIDcorrection(unsigned char* payload)
     float maxD = getFloatFromBytes(payload, 21);
 
     if(payload[0] == 1) // Linéaire 
-        SetupPidAsservissement(&PidX, Kp, Ki, Kd, maxP, maxI, maxD);    
+        SetupPidAsservissement(&robotState.PidX, Kp, Ki, Kd, maxP, maxI, maxD);    
     else if(payload[0] == 2) // Angulaire 
-        SetupPidAsservissement(&PidTheta, Kp, Ki, Kd, maxP, maxI, maxD);  
+        SetupPidAsservissement(&robotState.PidTheta, Kp, Ki, Kd, maxP, maxI, maxD);  
      
 }
 
