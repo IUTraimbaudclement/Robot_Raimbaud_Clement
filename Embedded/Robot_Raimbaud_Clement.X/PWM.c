@@ -8,6 +8,8 @@
 #define acceleration 5
 #define talon 50.0
 
+#define M_TO_PERCENT 35
+
 void InitPWM(void) {
     PTCON2bits.PCLKDIV = 0b000; //Divide by 1
     PTPER = 100 * PWMPER; //éPriode en pourcentage
@@ -24,20 +26,28 @@ void InitPWM(void) {
     PTCONbits.PTEN = 1;
 }
 
-void PWMSetSpeedConsigne(float vitesseEnPourcents, int moteur) {
-    if (vitesseEnPourcents > 100.0)
-        vitesseEnPourcents = 100.0;
-    else if (vitesseEnPourcents < -100.0)
-        vitesseEnPourcents = -100.0;
+//void PWMSetSpeedConsigne(float vitesseEnPourcents, int moteur) {
+//    if (vitesseEnPourcents > 100.0)
+//        vitesseEnPourcents = 100.0;
+//    else if (vitesseEnPourcents < -100.0)
+//        vitesseEnPourcents = -100.0;
+//    if (moteur == MOTEUR_GAUCHE)
+//        robotState.vitesseGaucheConsigne = vitesseEnPourcents;
+//
+//    else if (moteur == MOTEUR_DROIT)
+//        robotState.vitesseDroiteConsigne = -vitesseEnPourcents;
+//}
 
-  
+
+
+void PWMSetSpeedConsignePolar(float vitesseLineaire, float vitesseAngulaire) 
+{
+    robotState.vitesseDroiteConsigne = -M_TO_PERCENT * (vitesseLineaire + DISTROUES/2 * vitesseAngulaire);
+    robotState.vitesseGaucheConsigne = M_TO_PERCENT * (vitesseLineaire + DISTROUES/2 * vitesseAngulaire);
     
-    if (moteur == MOTEUR_GAUCHE)
-        robotState.vitesseGaucheConsigne = vitesseEnPourcents;
-
-    else if (moteur == MOTEUR_DROIT)
-        robotState.vitesseDroiteConsigne = -vitesseEnPourcents;
-
+    LimitToInterval(robotState.vitesseDroiteConsigne, -100, 100);
+    LimitToInterval(robotState.vitesseGaucheConsigne, -100, 100);
+      
 }
 
 void PWMUpdateSpeed()

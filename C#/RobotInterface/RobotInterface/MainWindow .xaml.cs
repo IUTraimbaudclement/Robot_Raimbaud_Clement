@@ -580,7 +580,7 @@ namespace RobotInterface
 
                 case Action.CONSIGNE:
 
-                    float getVitGauche = BitConverter.ToSingle(msgPayload, 0);
+                    float getVitLineaire = BitConverter.ToSingle(msgPayload, 0);
                     float getVitDroite = BitConverter.ToSingle(msgPayload, 4);
 
                     asservSpeedDisplay.UpdateIndependantSpeedConsigneValues(getVitGauche, getVitDroite);

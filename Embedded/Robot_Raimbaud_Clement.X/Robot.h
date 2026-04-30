@@ -1,6 +1,8 @@
 #ifndef ROBOT_H
 #define ROBOT_H
 
+#define DISTROUES 0.219
+
 #include "Asservissement.h"
 
 typedef struct robotStateBITS {

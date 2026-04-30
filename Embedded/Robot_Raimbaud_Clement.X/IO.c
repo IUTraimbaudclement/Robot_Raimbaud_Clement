@@ -58,7 +58,6 @@ void InitIO()
     LockIO(); // On lock les registres d'entrées/sorties, ainsi que les registres des PPS
 }
 
-
 void LockIO() {
     asm volatile ("mov #OSCCON,w1 \n"
                 "mov #0x46, w2 \n"

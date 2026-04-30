@@ -175,7 +175,7 @@ void sendConsigne(unsigned char* payload)
     float vitGauche = getFloatFromBytes(payload, 0);
     float vitDroite = getFloatFromBytes(payload, 4);
 
-    robotState.vitesseGaucheConsigne = vitGauche;
+    robotState.vitesseGaucheLineaire = vitGauche;
     robotState.vitesseDroiteConsigne = vitDroite;  
 }
 

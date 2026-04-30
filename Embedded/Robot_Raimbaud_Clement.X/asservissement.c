@@ -29,7 +29,7 @@ double Correcteur(volatile PidCorrector* PidCorr, double erreur)
 
 void UpdateAsservissement()
 {
-    robotState.PidX.erreur = ...;
+    robotState.PidX.erreur = robotState.Vite;
     robotState.PidTheta.erreur = ...;
     
     robotState.CorrectionVitesseLineaire = Correcteur(&robotState.PidX, robotState.PidX.erreur);
