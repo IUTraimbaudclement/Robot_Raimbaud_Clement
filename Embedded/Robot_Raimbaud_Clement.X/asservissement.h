@@ -20,5 +20,8 @@ typedef struct _PidCorrector
 }PidCorrector;
 
 void SetupPidAsservissement(volatile PidCorrector* PidCorr, float Kp, float Ki, float Kd, float proportionelleMax, float integralMax, float deriveeMax);
+void UpdateAsservissement();
+void SendPidData();
+void SendAsservData();
 #endif	/* ASSERVISSEMENT_H */
 

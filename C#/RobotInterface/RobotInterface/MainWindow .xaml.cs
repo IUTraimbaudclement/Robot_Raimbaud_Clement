@@ -100,15 +100,6 @@ namespace RobotInterface
                     DecodeMessage(data);
                 }
             }
-
-
-            asservSpeedDisplay.UpdateIndependantOdometrySpeed(1, 2);
-            asservSpeedDisplay.UpdateIndependantSpeedCommandValues(3, 4);
-
-            asservSpeedDisplay.UpdatePolarOdometrySpeed(1, 2);
-            asservSpeedDisplay.UpdatePolarSpeedCommandValues(3, 4);
-
-
         }
 
         public void SerialPort1_DataReceived(object sender, DataReceivedArgs e)
@@ -191,27 +182,6 @@ namespace RobotInterface
 
             //UartEncodeAndSendMessage((int) Action.VIT, 2, new byte[] { 15, 19 });
 
-
-            float Kp = 10;
-            float Ki = 20;
-            float Kd = 30;
-
-            float maxP = 1;
-            float maxI = 2;
-            float maxD = 3;
-
-            List<byte> CorrSend = new List<byte>();
-
-            CorrSend.Add((byte) Corr.lineaire);
-            CorrSend.AddRange(BitConverter.GetBytes(Kp));
-            CorrSend.AddRange(BitConverter.GetBytes(Ki));
-            CorrSend.AddRange(BitConverter.GetBytes(Kd));
-            CorrSend.AddRange(BitConverter.GetBytes(maxP));
-            CorrSend.AddRange(BitConverter.GetBytes(maxI));
-            CorrSend.AddRange(BitConverter.GetBytes(maxD));
-
-            UartEncodeAndSendMessage((int) Action.PID, CorrSend.Count(), CorrSend.ToArray());
-
         }
 
         private void PID_Click(object sender, RoutedEventArgs e)
@@ -249,18 +219,18 @@ namespace RobotInterface
 
         private void Consigne_Click(object sender, RoutedEventArgs e)
         {
-            float sendVitGauche = 0;
-            float sendVitDroite = 0;
+            float sendVitLineaire = 0;
+            float sendVitAngulaire = 0;
 
-            float.TryParse(TextBoxVitGauche.Text.Split(":")[1], out sendVitGauche);
-            float.TryParse(TextBoxVitDroite.Text.Split(":")[1], out sendVitDroite);
+            float.TryParse(TextBoxVitLinaire.Text.Split(":")[1], out sendVitLineaire);
+            float.TryParse(TextBoxVitAngulaire.Text.Split(":")[1], out sendVitAngulaire);
 
             List<byte> ConsSend = new List<byte>();
 
-            ConsSend.AddRange(BitConverter.GetBytes(sendVitGauche));
-            ConsSend.AddRange(BitConverter.GetBytes(sendVitDroite));
+            ConsSend.AddRange(BitConverter.GetBytes(sendVitLineaire));
+            ConsSend.AddRange(BitConverter.GetBytes(sendVitAngulaire));
 
-            UartEncodeAndSendMessage((int)Action.CONSIGNE, ConsSend.Count(), ConsSend.ToArray());
+            UartEncodeAndSendMessage((int)Action.ASSERV, ConsSend.Count(), ConsSend.ToArray());
 
         }
 
@@ -391,7 +361,7 @@ namespace RobotInterface
             MODE = 0x0052,
             POSITION = 0x0061,
             PID = 0x0070,
-            CONSIGNE = 0x0071,
+            ASSERV = 0x0071,
         }
 
         public enum Corr
@@ -537,8 +507,6 @@ namespace RobotInterface
                     robot.positionXOdo = BitConverter.ToSingle(msgPayload, 4);
                     robot.positionYOdo = BitConverter.ToSingle(msgPayload, 8);
                     float angleRad = BitConverter.ToSingle(msgPayload, 12);
-                    float vitLin = BitConverter.ToSingle(msgPayload, 16);
-                    float vitAng = BitConverter.ToSingle(msgPayload, 20);
 
                     robot.angle = (360 / (2 * Math.PI)) * angleRad;
 
@@ -546,8 +514,6 @@ namespace RobotInterface
                         " | Y0: " + robot.positionYOdo.ToString("N2") +
                         " | ANGLE: " + robot.angle.ToString("N2") +
                         " | TEMPS: " + instantPosition.ToString() + " ms" + "\r\n";
-
-                    asservSpeedDisplay.UpdatePolarOdometrySpeed(vitLin, vitAng);
 
                     /*
                     float g = BitConverter.ToSingle(msgPayload, 16);
@@ -566,24 +532,43 @@ namespace RobotInterface
                     float getXMaxP = BitConverter.ToSingle(msgPayload, 12);
                     float getXMaxI = BitConverter.ToSingle(msgPayload, 16);
                     float getXMaxD = BitConverter.ToSingle(msgPayload, 20);
+                    float getXCorrP = BitConverter.ToSingle(msgPayload, 24);
+                    float getXCorrI = BitConverter.ToSingle(msgPayload, 28);
+                    float getXCorrD = BitConverter.ToSingle(msgPayload, 32);
 
-                    float getThétaKp = BitConverter.ToSingle(msgPayload, 24);
-                    float getThétaKi = BitConverter.ToSingle(msgPayload, 28);
-                    float getThétaKd = BitConverter.ToSingle(msgPayload, 32);
-                    float getThétaMaxP = BitConverter.ToSingle(msgPayload, 36);
-                    float getThétaMaxI = BitConverter.ToSingle(msgPayload, 40);
-                    float getThétaMaxD = BitConverter.ToSingle(msgPayload, 44);
+                    float getThétaKp = BitConverter.ToSingle(msgPayload, 36);
+                    float getThétaKi = BitConverter.ToSingle(msgPayload, 40);
+                    float getThétaKd = BitConverter.ToSingle(msgPayload, 44);
+                    float getThétaMaxP = BitConverter.ToSingle(msgPayload, 48);
+                    float getThétaMaxI = BitConverter.ToSingle(msgPayload, 52);
+                    float getThétaMaxD = BitConverter.ToSingle(msgPayload, 56);
+                    float getThétaCorrP = BitConverter.ToSingle(msgPayload, 60);
+                    float getThétaCorrI = BitConverter.ToSingle(msgPayload, 64);
+                    float getThétaCorrD = BitConverter.ToSingle(msgPayload, 68);
 
                     asservSpeedDisplay.UpdatePolarSpeedCorrectionGains(getXKp, getThétaKp, getXKi, getThétaKi, getXKd, getThétaKd);
                     asservSpeedDisplay.UpdatePolarSpeedCorrectionLimits(getXMaxP, getThétaMaxP, getXMaxI, getThétaMaxI, getXMaxD, getThétaMaxD);
+                    asservSpeedDisplay.UpdatePolarSpeedCorrectionValues(getXCorrP, getThétaCorrP, getXCorrI, getThétaCorrI, getXCorrD, getThétaCorrD);
                     break;
 
-                case Action.CONSIGNE:
+                case Action.ASSERV:
 
-                    float getVitLineaire = BitConverter.ToSingle(msgPayload, 0);
-                    float getVitDroite = BitConverter.ToSingle(msgPayload, 4);
+                    float getConsigneVitLineaire = BitConverter.ToSingle(msgPayload, 0);
+                    float getConsigneVitAngulaire = BitConverter.ToSingle(msgPayload, 4);
 
-                    asservSpeedDisplay.UpdateIndependantSpeedConsigneValues(getVitGauche, getVitDroite);
+                    float getVitLineaire = BitConverter.ToSingle(msgPayload, 8);
+                    float getVitAngulaire = BitConverter.ToSingle(msgPayload, 12);
+
+                    float getErreurLineaire = BitConverter.ToSingle(msgPayload, 16);
+                    float getErreurAngulaire = BitConverter.ToSingle(msgPayload, 20);
+
+                    float getCommandLineaire = BitConverter.ToSingle(msgPayload, 24);
+                    float getCommandAngulaire = BitConverter.ToSingle(msgPayload, 28);
+
+                    asservSpeedDisplay.UpdatePolarSpeedConsigneValues(getConsigneVitLineaire, getConsigneVitAngulaire);
+                    asservSpeedDisplay.UpdatePolarOdometrySpeed(getVitLineaire, getVitAngulaire);
+                    asservSpeedDisplay.UpdatePolarSpeedErrorValues(getErreurLineaire, getErreurAngulaire);
+                    asservSpeedDisplay.UpdatePolarSpeedCommandValues(getCommandLineaire, getCommandAngulaire);
                     break;
             }
 

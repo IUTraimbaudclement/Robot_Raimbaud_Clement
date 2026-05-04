@@ -6,12 +6,11 @@
 #include "main.h"
 #include "ChipConfig.h"
 #include "QEI.h"
+#include "asservissement.h"
 #include "Robot.h"
 #include "Toolbox.h"
 
 #define T1freq 250
-#define PID_CORRECTION 0x0070
-#define CONSIGNE 0x0071
 
 unsigned long timestamp;
 
@@ -132,12 +131,13 @@ void __attribute__((interrupt, no_auto_psv)) _T1Interrupt(void)
     LED_BLANCHE_2 = !LED_BLANCHE_2;
     
     ADC1StartConversionSequence();
-    OperatingSystemLoop(); 
+    //OperatingSystemLoop(); 
     QEIUpdateData();
     UpdateAsservissement();
     
     if(t1add++ % 250 == 0)
         SendPositionData();
+
 
 }
 
@@ -153,30 +153,12 @@ void __attribute__((interrupt, no_auto_psv)) _T4Interrupt(void)
     LED_BLEUE_2 = !LED_BLEUE_2;
     
     timestamp++;
-    
-    unsigned char PidPayload[48];
-    
-    getBytesFromFloat(PidPayload, 0, robotState.PidX.Kp);
-    getBytesFromFloat(PidPayload, 4, robotState.PidX.Ki);
-    getBytesFromFloat(PidPayload, 8, robotState.PidX.Kd);
-    getBytesFromFloat(PidPayload, 12, robotState.PidX.erreurProportionelleMax);
-    getBytesFromFloat(PidPayload, 16, robotState.PidX.erreurIntegraleMax);
-    getBytesFromFloat(PidPayload, 20, robotState.PidX.erreurDeriveeMax); 
-    
-    getBytesFromFloat(PidPayload, 24, robotState.PidTheta.Kp);
-    getBytesFromFloat(PidPayload, 28, robotState.PidTheta.Ki);
-    getBytesFromFloat(PidPayload, 32, robotState.PidTheta.Kd);
-    getBytesFromFloat(PidPayload, 36, robotState.PidTheta.erreurProportionelleMax);
-    getBytesFromFloat(PidPayload, 40, robotState.PidTheta.erreurIntegraleMax);
-    getBytesFromFloat(PidPayload, 44, robotState.PidTheta.erreurDeriveeMax); 
-    
-    UartEncodeAndSendMessage(PID_CORRECTION, 48, PidPayload);
-
-    unsigned char ConsignePayload[8];
-    getBytesFromFloat(ConsignePayload, 0, robotState.vitesseGaucheConsigne);
-    getBytesFromFloat(ConsignePayload, 4, robotState.vitesseDroiteConsigne);
-    UartEncodeAndSendMessage(CONSIGNE, 8, ConsignePayload);
-   
+        
+    if(timestamp%100 == 0)
+    {
+        SendPidData();
+        SendAsservData();
+    }
 }
 
 //Interruption du timer 32 bits sur 2-3
@@ -184,6 +166,4 @@ void __attribute__((interrupt, no_auto_psv)) _T3Interrupt(void)
 {
     IFS0bits.T3IF = 0; // Clear Timer3 Interrupt Flag
     LED_ORANGE_2 = !LED_ORANGE_2;
-      
-    
 }

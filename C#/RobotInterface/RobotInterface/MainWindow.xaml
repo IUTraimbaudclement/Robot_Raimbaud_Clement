@@ -74,8 +74,8 @@
         <Button x:Name="ButtonPIDx" Content="X" HorizontalAlignment="Left" Margin="418,0,0,0" VerticalAlignment="Top" Width="50" Click="PID_Click" Grid.Column="1" RenderTransformOrigin="0.48,2.277" Grid.Row="1"/>
         <Button x:Name="ButtonPIDthéta" Content="Théta" HorizontalAlignment="Left" Margin="418,23,0,0" Grid.Row="1" Width="50" Click="PID_Click" Grid.Column="1" Height="28" VerticalAlignment="Top"/>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="10,0,0,42" Width="140" Grid.Column="1" Height="20" VerticalAlignment="Bottom" Grid.Row="1">
-            <TextBox x:Name="TextBoxVitGauche" HorizontalAlignment="Left" TextWrapping="Wrap" Text="VitGauche:" VerticalAlignment="Top" Width="70" Height="20" Grid.RowSpan="2"/>
-            <TextBox x:Name="TextBoxVitDroite" HorizontalAlignment="Left" TextWrapping="Wrap" Text="VitDroite:" VerticalAlignment="Top" Width="70" Height="20" Grid.RowSpan="2"/>
+            <TextBox x:Name="TextBoxVitLinaire" HorizontalAlignment="Left" TextWrapping="Wrap" Text="VitLin:" VerticalAlignment="Top" Width="70" Height="20" Grid.RowSpan="2"/>
+            <TextBox x:Name="TextBoxVitAngulaire" HorizontalAlignment="Left" TextWrapping="Wrap" Text="VitAng:" VerticalAlignment="Top" Width="70" Height="20" Grid.RowSpan="2"/>
         </StackPanel>
         <Button x:Name="ButtonConsigne" Content="Consigne" HorizontalAlignment="Left" Margin="30,45,0,0" VerticalAlignment="Top" Width="120" Click="Consigne_Click" Grid.Column="1" RenderTransformOrigin="0.48,2.277" Grid.Row="1"/>
 

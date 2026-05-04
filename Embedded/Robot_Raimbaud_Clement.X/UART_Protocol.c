@@ -7,6 +7,7 @@
 #include "Robot.h"
 #include "asservissement.h"
 #include "Toolbox.h"
+#include "PWM.h"
 
 #define WAITING 0
 #define FUNCTION_MSB 1
@@ -15,11 +16,6 @@
 #define LENGTH_LSB 4
 #define PAYLOAD 5
 #define CHECKSUM 6
-
-#define SET_ROBOT_STATE 0x0051
-#define SET_ROBOT_MANUAL_CONTROL 0x0052
-#define CORRECTEUR_PID 0x0070
-#define CONSIGNE 0x0071
 
 unsigned char UartCalculateChecksum(int msgFunction, int msgPayloadLength, unsigned char* msgPayload)
 {
@@ -143,18 +139,18 @@ void UartProcessDecodedMessage(int function, int payloadLength, unsigned char* p
         case SET_ROBOT_MANUAL_CONTROL:
             SetRobotAutoControlState(payload[0]);
             break;
-        case CORRECTEUR_PID:
-            sendPIDcorrection(payload);
+        case PID_DATA:
+            getPidData(payload);
             break;
-        case CONSIGNE:
-            sendConsigne(payload);
+        case ASSERV:
+            getConsigne(payload);
             break;
         default:
             break;
     }
 }
     
-void sendPIDcorrection(unsigned char* payload)
+void getPidData(unsigned char* payload)
 {   
     float Kp = getFloatFromBytes(payload, 1);
     float Ki = getFloatFromBytes(payload, 5);
@@ -170,13 +166,12 @@ void sendPIDcorrection(unsigned char* payload)
      
 }
 
-void sendConsigne(unsigned char* payload)
+void getConsigne(unsigned char* payload)
 {   
-    float vitGauche = getFloatFromBytes(payload, 0);
-    float vitDroite = getFloatFromBytes(payload, 4);
+    float vitLin = getFloatFromBytes(payload, 0);
+    float vitAng = getFloatFromBytes(payload, 4);
 
-    robotState.vitesseGaucheLineaire = vitGauche;
-    robotState.vitesseDroiteConsigne = vitDroite;  
+    PWMSetSpeedConsignePolar(vitLin, vitAng);
 }
 
 void SetRobotAutoControlState(unsigned char c)

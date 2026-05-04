@@ -55,6 +55,7 @@ int main (void){
     robotState.vitesseGaucheCommandeCourante = 0;
     robotState.vitesseDroiteCommandeCourante = 0;
     robotState.mode = 0x00; // Mode Automatique
+    PWMSetSpeedConsignePolar(0.0, 0.0); // Vitesse du robot à 0
     
     /***********************************************************************************************/
     //    Initialisation UART
@@ -155,7 +156,7 @@ void OperatingSystemLoop(void)
     switch (stateRobot)
     {
         case STATE_ARRET:
-            PWMSetSpeedConsignePolar(0, 0)
+            PWMSetSpeedConsignePolar(0, 0);
 //            PWMSetSpeedConsigne(0, MOTEUR_DROIT);
 //            PWMSetSpeedConsigne(0, MOTEUR_GAUCHE);
             stateRobot = STATE_ARRET_EN_COURS;
