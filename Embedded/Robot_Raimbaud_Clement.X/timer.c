@@ -128,13 +128,14 @@ int t1add = 0;
 void __attribute__((interrupt, no_auto_psv)) _T1Interrupt(void) 
 {  
     IFS0bits.T1IF = 0;
-    LED_BLANCHE_2 = !LED_BLANCHE_2;
-    
+//    LED_BLANCHE_2 = !LED_BLANCHE_2;
+//    
     ADC1StartConversionSequence();
-    //OperatingSystemLoop(); 
+    OperatingSystemLoop(); 
     QEIUpdateData();
+//    
     UpdateAsservissement();
-    
+    PWMUpdateSpeed();
     if(t1add++ % 250 == 0)
         SendPositionData();
 

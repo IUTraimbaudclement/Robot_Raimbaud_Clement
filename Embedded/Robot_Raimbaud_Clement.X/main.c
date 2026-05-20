@@ -54,8 +54,8 @@ int main (void){
     /***********************************************************************************************/
     robotState.vitesseGaucheCommandeCourante = 0;
     robotState.vitesseDroiteCommandeCourante = 0;
-    robotState.mode = 0x00; // Mode Automatique
-    PWMSetSpeedConsignePolar(0.0, 0.0); // Vitesse du robot ‡ 0
+    robotState.mode = 1; // Mode Automatique
+    PWMSetSpeedConsignePolar(1.0, 0.0); // Vitesse du robot ‡ 0
     
     /***********************************************************************************************/
     //    Initialisation UART
@@ -114,7 +114,7 @@ int main (void){
             UartEncodeAndSendMessage(0x0030, 3, payload);
             }
             
-            /*
+            
             if(robotState.distanceTelemetreGaucheToute < 30.0)
                 LED_BLANCHE_1 = 1;
             else
@@ -139,7 +139,7 @@ int main (void){
                 LED_VERTE_1 = 1;
             else
                 LED_VERTE_1 = 0;    
-            */
+            
             
         }
     
@@ -152,6 +152,10 @@ int timestampTurnRight;
 void OperatingSystemLoop(void)
 {
     unsigned char payload[5] = {stateRobot , timestamp >> 24, timestamp >> 16, timestamp >> 8, timestamp};
+    
+    if(robotState.mode == 1)
+        return; // Mode Manuel
+    
     
     switch (stateRobot)
     {
@@ -282,10 +286,7 @@ unsigned char nextStateRobot=0;
 
 void SetNextRobotStateInAutomaticMode()
 {
-    if(robotState.mode == 0x01)
-        return; // Mode Manuel
-    
-    
+
     unsigned char positionObstacle = PAS_D_OBSTACLE;
     //ÈDtermination de la position des obstacles en fonction des ÈÈËtlmtres
     if ( robotState.distanceTelemetreDroit < 40 &&
@@ -327,44 +328,44 @@ void SetNextRobotStateInAutomaticMode()
     }
 
     //Si l?on n?est pas dans la transition de lÈ?tape en cours
-    if (nextStateRobot != stateRobot - 1)
-    {
-        stateRobot = nextStateRobot; 
-        LED_BLANCHE_1 = 0;
-        LED_BLEUE_1 = 0;
-        LED_ORANGE_1 = 0;
-        LED_ROUGE_1 = 0;
-        LED_VERTE_1 = 0;
-
-        if(positionObstacle == OBSTACLE_A_GAUCHE)
-        {
-            LED_BLANCHE_1 = 1;
-            LED_BLEUE_1 = 1; 
-        }
-         else if(positionObstacle == OBSTACLE_A_DROITE)
-        {
-            LED_ROUGE_1 = 1;
-            LED_VERTE_1 = 1; 
-        }   
-           else if(positionObstacle == OBSTACLE_GAUCHE_DROITE)
-        {
-            LED_BLANCHE_1 = 1;
-            LED_VERTE_1 = 1; 
-        }         
-        else if(positionObstacle == OBSTACLE_EN_FACE)
-        {
-            if(nextStateRobot == STATE_TOURNE_VITE_GAUCHE)
-                LED_VERTE_1 = 1;
-            else if(nextStateRobot == STATE_TOURNE_VITE_DROITE)
-                LED_BLANCHE_1 = 1;   
-            else if(nextStateRobot == STATE_TOURNE_SUR_PLACE)
-            {
-                LED_BLANCHE_1 = 1;
-                LED_BLEUE_1 = 1;
-                LED_ORANGE_1 = 1;
-                LED_ROUGE_1 = 1;
-                LED_VERTE_1 = 1; 
-            }
-        }     
-    }
+//    if (nextStateRobot != stateRobot - 1)
+//    {
+//        stateRobot = nextStateRobot; 
+//        LED_BLANCHE_1 = 0;
+//        LED_BLEUE_1 = 0;
+//        LED_ORANGE_1 = 0;
+//        LED_ROUGE_1 = 0;
+//        LED_VERTE_1 = 0;
+//
+//        if(positionObstacle == OBSTACLE_A_GAUCHE)
+//        {
+//            LED_BLANCHE_1 = 1;
+//            LED_BLEUE_1 = 1; 
+//        }
+//         else if(positionObstacle == OBSTACLE_A_DROITE)
+//        {
+//            LED_ROUGE_1 = 1;
+//            LED_VERTE_1 = 1; 
+//        }   
+//           else if(positionObstacle == OBSTACLE_GAUCHE_DROITE)
+//        {
+//            LED_BLANCHE_1 = 1;
+//            LED_VERTE_1 = 1; 
+//        }         
+//        else if(positionObstacle == OBSTACLE_EN_FACE)
+//        {
+//            if(nextStateRobot == STATE_TOURNE_VITE_GAUCHE)
+//                LED_VERTE_1 = 1;
+//            else if(nextStateRobot == STATE_TOURNE_VITE_DROITE)
+//                LED_BLANCHE_1 = 1;   
+//            else if(nextStateRobot == STATE_TOURNE_SUR_PLACE)
+//            {
+//                LED_BLANCHE_1 = 1;
+//                LED_BLEUE_1 = 1;
+//                LED_ORANGE_1 = 1;
+//                LED_ROUGE_1 = 1;
+//                LED_VERTE_1 = 1; 
+//            }
+//        }     
+//}
 }

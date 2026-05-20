@@ -9,7 +9,7 @@ typedef struct robotStateBITS {
     union {
         struct {
             unsigned char taskEnCours;
-            unsigned char mode;
+            int mode;
             float vitesseGaucheConsigne;
             float vitesseGaucheCommandeCourante;
             float vitesseDroiteConsigne;

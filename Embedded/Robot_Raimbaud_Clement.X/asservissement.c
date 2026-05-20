@@ -18,10 +18,10 @@ void SetupPidAsservissement(volatile PidCorrector* PidCorr, float Kp, float Ki, 
 double Correcteur(volatile PidCorrector* PidCorr, double erreur)
 {
     PidCorr->erreur = erreur;
-    double erreurProportionnelle = LimitToInterval(erreur, -PidCorr->erreurProportionelleMax, PidCorr->erreurProportionelleMax);
+    double erreurProportionnelle = LimitToInterval(erreur, -PidCorr->erreurProportionelleMax/PidCorr->Kp, PidCorr->erreurProportionelleMax/PidCorr->Kp);
     PidCorr->corrP = erreurProportionnelle * PidCorr->Kp;
     PidCorr->erreurIntegrale += erreur / FREQ_ECH_QEI;
-    PidCorr->erreurIntegrale = LimitToInterval(PidCorr->erreurIntegrale, -PidCorr->erreurIntegraleMax, PidCorr->erreurIntegraleMax);
+    PidCorr->erreurIntegrale = LimitToInterval(PidCorr->erreurIntegrale, -PidCorr->erreurIntegraleMax/PidCorr->Ki, PidCorr->erreurIntegraleMax/PidCorr->Ki);
     PidCorr->corrI = PidCorr->erreurIntegrale * PidCorr->Ki;
     double erreurDerivee = (erreur - PidCorr->epsilon_1)*FREQ_ECH_QEI;
     double deriveeBornee = LimitToInterval(erreurDerivee, -PidCorr->erreurDeriveeMax/PidCorr->Kd, PidCorr->erreurDeriveeMax/PidCorr->Kd);

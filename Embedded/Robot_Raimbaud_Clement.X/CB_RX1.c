@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "CB_RX1.h"
-#define CBRX1_BUFFER_SIZE 128
+#define CBRX1_BUFFER_SIZE 512
 
 int cbRx1Head = 0;
 int cbRx1Tail = 0;
