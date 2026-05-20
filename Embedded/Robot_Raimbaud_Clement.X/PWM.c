@@ -2,6 +2,7 @@
 #include "IO.h"
 #include "PWM.h"
 #include "Robot.h"
+#include "asservissement.h"
 #include "Toolbox.h"
 
 #define PWMPER 24.0
@@ -44,13 +45,15 @@ void PWMSetSpeedConsignePolar(float vitesseLineaire, float vitesseAngulaire)
 {
     robotState.consigneLineaireFromOdometry = vitesseLineaire;
     robotState.consigneAngulaireFromOdometry = vitesseAngulaire;
-    
+}
+
+void PWMSetSpeedCommandPolar(float vitesseLineaire, float vitesseAngulaire) 
+{    
     robotState.vitesseDroiteConsigne = -M_TO_PERCENT * (vitesseLineaire + DISTROUES/2 * vitesseAngulaire);
     robotState.vitesseGaucheConsigne = M_TO_PERCENT * (vitesseLineaire - DISTROUES/2 * vitesseAngulaire);
     
     LimitToInterval(robotState.vitesseDroiteConsigne, -100, 100);
-    LimitToInterval(robotState.vitesseGaucheConsigne, -100, 100);
-      
+    LimitToInterval(robotState.vitesseGaucheConsigne, -100, 100);   
 }
 
 void PWMUpdateSpeed()

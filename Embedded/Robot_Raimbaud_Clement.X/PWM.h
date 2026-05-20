@@ -6,6 +6,7 @@
 
 void InitPWM(void);
 void PWMSetSpeedConsignePolar(float, float);
+void PWMSetSpeedCommandPolar(float vitesseLineaire, float vitesseAngulaire) ;
 void PWMUpdateSpeed(void);
 
 #endif /* PWM_H */

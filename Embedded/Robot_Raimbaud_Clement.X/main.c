@@ -55,7 +55,7 @@ int main (void){
     robotState.vitesseGaucheCommandeCourante = 0;
     robotState.vitesseDroiteCommandeCourante = 0;
     robotState.mode = 1; // Mode Automatique
-    PWMSetSpeedConsignePolar(1.0, 0.0); // Vitesse du robot à 0
+    
     
     /***********************************************************************************************/
     //    Initialisation UART
@@ -70,6 +70,9 @@ int main (void){
     
     robotState.xPosFromOdometry = 0;
     robotState.yPosFromOdometry = 0;
+    PWMSetSpeedConsignePolar(0.0, 0.0); // Vitesse du robot à 0
+    SetupPidAsservissement(&robotState.PidX, 7, 140, 0, 5, 5, 5);
+    SetupPidAsservissement(&robotState.PidTheta, 6, 140, 0, 5, 5, 5);
     
     /***********************************************************************************************/
     // Boucle Principale

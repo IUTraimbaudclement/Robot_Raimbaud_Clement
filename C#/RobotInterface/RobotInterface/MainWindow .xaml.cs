@@ -34,6 +34,14 @@ namespace RobotInterface
         int lineVit = 0;
         int linePos = 1;
 
+        // CORR:
+        // THETA
+        // Kp = 6
+        // Ki = 140
+
+        // LIN
+        // Kp = 7
+        // Ki = 140
 
         public MainWindow()
         {

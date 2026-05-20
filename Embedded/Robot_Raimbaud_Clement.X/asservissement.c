@@ -38,7 +38,7 @@ void UpdateAsservissement()
     robotState.CorrectionVitesseLineaire = Correcteur(&robotState.PidX, robotState.PidX.erreur);
     robotState.CorrectionVitesseAngulaire = Correcteur(&robotState.PidTheta, robotState.PidTheta.erreur);
     
-    PWMSetSpeedConsignePolar(robotState.CorrectionVitesseLineaire, robotState.CorrectionVitesseAngulaire);
+    PWMSetSpeedCommandPolar(robotState.CorrectionVitesseLineaire, robotState.CorrectionVitesseAngulaire);
 }
 
 void SendPidData()
